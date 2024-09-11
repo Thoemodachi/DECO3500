@@ -1,1 +1,1 @@
-hello world;
+Collaborative University Document Discussion Board
