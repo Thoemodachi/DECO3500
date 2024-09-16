@@ -31,3 +31,28 @@
     margin: 10px 0;
   }
   
+/* Style for the directory list */
+#directory-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  /* Style for each item in the directory */
+  .directory-item {
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  /* Style for file and folder images */
+  .directory-item img {
+    width: 50px; /* Adjust size as needed */
+    height: 50px; /* Adjust size as needed */
+  }
+  
+  /* Style for file and folder names */
+  .directory-item p {
+    margin: 10px 0;
+  }
+  
