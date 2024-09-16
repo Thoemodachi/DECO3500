@@ -3,12 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Viewer</title>
+  <title>Collaboration Page</title> <!-- Updated title -->
   <link rel="stylesheet" href="/style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 </head>
 <body>
+  <!-- Back to main menu link -->
+  <a href="/" id="back-link">
+    <img src="/images/back-arrow.png" alt="Back" id="back-arrow">
+  </a>
+
+  <!-- Heading for the file name -->
+  <h1 id="file-name">PDF Viewer</h1>
+
+  <!-- Container for the PDF pages -->
   <div id="pdf-container"></div>
+
   <script src="/pdf-viewer.js"></script>
 </body>
 </html>

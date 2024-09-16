@@ -1,10 +1,16 @@
-const url = new URLSearchParams(window.location.search).get('file'); // Get the PDF file name from the URL
+// Get the file name from the URL parameters
+const urlParams = new URLSearchParams(window.location.search);
+const fileName = urlParams.get('file'); // Get the PDF file name from the URL
 
-if (url) {
+if (fileName) {
   const container = document.getElementById('pdf-container');
-  
+  const fileNameWithoutExt = fileName.split('.').slice(0, -1).join('.'); // Remove file extension
+
+  // Set the file name heading
+  document.getElementById('file-name').textContent = fileNameWithoutExt;
+
   // Load PDF.js and render the PDF
-  pdfjsLib.getDocument(`/pdf/${url}`).promise.then(pdf => {
+  pdfjsLib.getDocument(`/pdf/${fileName}`).promise.then(pdf => {
     const numPages = pdf.numPages;
     console.log('Number of pages:', numPages);
 
