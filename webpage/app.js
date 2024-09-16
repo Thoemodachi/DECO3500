@@ -1,102 +1,80 @@
-// Connect to the server using socket.io
-const socket = io();
-
-// Canvas setup
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
+const fileUpload = document.getElementById('file-upload');
+const canvasContainer = document.getElementById('canvas-container');
+const pdfCanvas = document.getElementById('pdf-render');
+const drawCanvas = document.getElementById('draw-layer');
+const ctx = drawCanvas.getContext('2d');
+let pdfDoc = null;
+let pageNum = 1;
+let scale = 1.5;
 let drawing = false;
 
-// Start drawing when the mouse is pressed down
+// Set up drawing on the overlay canvas
 const startDrawing = (e) => {
   drawing = true;
   draw(e);
 };
 
-// Stop drawing when the mouse is released
 const endDrawing = () => {
   drawing = false;
-  ctx.beginPath(); // Reset the path for the next drawing
+  ctx.beginPath();
 };
 
-// Draw on the canvas as the mouse moves
 const draw = (e) => {
   if (!drawing) return;
 
-  const rect = canvas.getBoundingClientRect();
+  const rect = drawCanvas.getBoundingClientRect();
   const x = e.clientX - rect.left;
   const y = e.clientY - rect.top;
 
-  // Drawing settings
   ctx.lineWidth = 5;
   ctx.lineCap = 'round';
-  ctx.strokeStyle = 'black';
+  ctx.strokeStyle = 'red';
 
-  // Draw the line
   ctx.lineTo(x, y);
   ctx.stroke();
   ctx.beginPath();
   ctx.moveTo(x, y);
-
-  // Emit drawing data to the server
-  socket.emit('drawing', { x, y });
 };
 
-// Mouse event listeners
-canvas.addEventListener('mousedown', startDrawing);
-canvas.addEventListener('mouseup', endDrawing);
-canvas.addEventListener('mousemove', draw);
+drawCanvas.addEventListener('mousedown', startDrawing);
+drawCanvas.addEventListener('mouseup', endDrawing);
+drawCanvas.addEventListener('mousemove', draw);
 
-// Listen for drawing data from other clients and draw on the canvas
-socket.on('drawing', (data) => {
-  ctx.lineTo(data.x, data.y);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(data.x, data.y);
-});
+// Render the PDF on the bottom canvas
+const renderPage = (num) => {
+  pdfDoc.getPage(num).then((page) => {
+    const viewport = page.getViewport({ scale });
+    pdfCanvas.height = viewport.height;
+    pdfCanvas.width = viewport.width;
+    drawCanvas.height = viewport.height;
+    drawCanvas.width = viewport.width;
 
-// Text typing logic (for collaborative typing)
-const textArea = document.getElementById('text-area');
+    const ctx = pdfCanvas.getContext('2d');
+    const renderContext = {
+      canvasContext: ctx,
+      viewport: viewport,
+    };
 
-textArea.addEventListener('input', () => {
-  const text = textArea.value;
-  socket.emit('typing', text);
-});
-
-socket.on('typing', (text) => {
-  textArea.value = text;
-});
-
-// Chat functionality
-const chat = document.getElementById('chat');
-const messageInput = document.getElementById('message');
-const sendButton = document.getElementById('send-btn');
-
-const addMessageToChat = (message) => {
-  const messageElement = document.createElement('div');
-  messageElement.textContent = message;
-  chat.appendChild(messageElement);
-  chat.scrollTop = chat.scrollHeight; // Scroll to the bottom of the chat
+    page.render(renderContext);
+  });
 };
 
-// Send a message when the button is clicked or Enter key is pressed
-const sendMessage = () => {
-  const message = messageInput.value.trim();
-  if (message) {
-    socket.emit('chat message', message);
-    messageInput.value = '';
+// Handle file upload and render PDF
+fileUpload.addEventListener('change', (event) => {
+  const file = event.target.files[0];
+  if (file.type !== 'application/pdf') {
+    alert('Please upload a valid PDF file.');
+    return;
   }
-};
 
-sendButton.addEventListener('click', sendMessage);
+  const fileReader = new FileReader();
+  fileReader.onload = (e) => {
+    const typedArray = new Uint8Array(e.target.result);
+    pdfjsLib.getDocument(typedArray).promise.then((pdf) => {
+      pdfDoc = pdf;
+      renderPage(pageNum);
+    });
+  };
 
-messageInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    e.preventDefault();
-    sendMessage();
-  }
-});
-
-// Listen for chat messages from other clients
-socket.on('chat message', (message) => {
-  addMessageToChat(message);
+  fileReader.readAsArrayBuffer(file);
 });
