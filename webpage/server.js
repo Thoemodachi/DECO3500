@@ -6,16 +6,18 @@ const app = express();
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Route to get the list of PDF files in the 'blackboard/assignment' directory
+// Route to get the list of files and directories in the local directory
 app.get('/files', (req, res) => {
-  const pdfDirectory = path.join(__dirname, 'blackboard', 'assignment'); // Adjusted path
-  fs.readdir(pdfDirectory, (err, files) => {
-    if (err) {
-      console.error('Error reading directory:', err);
-      return res.status(500).send('Unable to scan directory');
-    }
-    const pdfFiles = files.filter(file => path.extname(file) === '.pdf');
-    res.json(pdfFiles); // Send JSON response
+  const baseDirectory = path.join(__dirname, 'blackboard/assignment'); // Adjust this path
+  fs.readdir(baseDirectory, { withFileTypes: true }, (err, files) => {
+      if (err) {
+          return res.status(500).send('Unable to scan directory');
+      }
+      const fileList = files.map(file => ({
+          name: file.name,
+          isDirectory: file.isDirectory()
+      }));
+      res.json(fileList);
   });
 });
 

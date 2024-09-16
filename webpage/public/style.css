@@ -31,3 +31,62 @@
     margin: 10px 0;
   }
   
+/* Style for the directory list */
+#directory-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
+  /* Style for each item in the directory */
+  .directory-item {
+    text-align: center;
+    cursor: pointer;
+  }
+  
+  /* Style for file and folder images */
+  .directory-item img {
+    width: 50px; /* Adjust size as needed */
+    height: 50px; /* Adjust size as needed */
+  }
+  
+  /* Style for file and folder names */
+  .directory-item p {
+    margin: 10px 0;
+  }
+
+/* Ensure that the buttons stay fixed at the bottom left of the screen */
+.fixed-button {
+    position: fixed;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+#sticky-note-btn {
+    background-color: #FED800;
+    color: white;
+    bottom: 20px; /* Adjust position from bottom */
+    left: 20px;   /* Adjust position from left */
+}
+
+#cursor-mode-btn {
+    background-color: #f44336;
+    color: white;
+    bottom: 20px; /* Adjust position from bottom, moved above sticky-note-btn */
+    left: 100px;   /* Adjust position from left */
+    display: none; /* Hide by default */
+}
+
+/* Additional styling for sticky notes */
+.sticky-note {
+    position: absolute;
+    background-color: yellow;
+    border: 1px solid black;
+    padding: 10px;
+    width: 150px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+}
