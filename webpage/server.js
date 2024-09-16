@@ -1,43 +1,42 @@
 const express = require('express');
-const http = require('http');
-const socketIo = require('socket.io');
 const path = require('path');
-
+const fs = require('fs');
 const app = express();
-const server = http.createServer(app);
-const io = socketIo(server);
 
-// Serve static files from the current directory
-app.use(express.static(__dirname));
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Serve index.html when accessing the root
+// Route to get the list of PDF files in the 'blackboard/assignment' directory
+app.get('/files', (req, res) => {
+  const pdfDirectory = path.join(__dirname, 'blackboard', 'assignment'); // Adjusted path
+  fs.readdir(pdfDirectory, (err, files) => {
+    if (err) {
+      console.error('Error reading directory:', err);
+      return res.status(500).send('Unable to scan directory');
+    }
+    const pdfFiles = files.filter(file => path.extname(file) === '.pdf');
+    res.json(pdfFiles); // Send JSON response
+  });
+});
+
+// Route to serve the selected PDF file
+app.get('/pdf/:filename', (req, res) => {
+  const pdfDirectory = path.join(__dirname, 'blackboard', 'assignment'); // Adjusted path
+  const filePath = path.join(pdfDirectory, req.params.filename);
+  res.sendFile(filePath);
+});
+
+// Route to serve the homepage
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-io.on('connection', (socket) => {
-  console.log('A user connected');
-
-  // Handle drawing data
-  socket.on('drawing', (data) => {
-    socket.broadcast.emit('drawing', data);
-  });
-
-  // Handle typing data
-  socket.on('typing', (text) => {
-    socket.broadcast.emit('typing', text);
-  });
-
-  // Handle chat messages
-  socket.on('chat message', (message) => {
-    io.emit('chat message', message); // Broadcast to all clients
-  });
-
-  socket.on('disconnect', () => {
-    console.log('A user disconnected');
-  });
+// Route to serve the edit page
+app.get('/edit', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'edit.html'));
 });
 
-server.listen(3000, () => {
-  console.log('Server is running on port 3000');
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });

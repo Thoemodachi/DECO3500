@@ -1,0 +1,33 @@
+/* Style for the back arrow */
+#back-arrow {
+    width: 24px; /* Adjust as needed */
+    height: 24px; /* Adjust as needed */
+    vertical-align: middle;
+    cursor: pointer;
+  }
+  
+  /* Style for the back link */
+  #back-link {
+    display: block;
+    margin: 10px;
+  }
+  
+  /* Style for the heading */
+  h1 {
+    text-align: center;
+    margin: 20px 0;
+  }
+  
+  /* Style for the container holding all pages */
+  #pdf-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow: auto;
+  }
+  
+  /* Style for individual pages */
+  .pdf-page {
+    margin: 10px 0;
+  }
+  
