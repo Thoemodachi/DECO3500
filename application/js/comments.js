@@ -19,7 +19,7 @@ const replyMessageInput = document.getElementById('reply-message');
 const replyFileUploadInput = document.getElementById('reply-file-upload');
 const submitReplyBtn = document.getElementById('submit-reply-btn');
 const collapseBtn = document.getElementById('collapse-btn');
-const sidebar = document.getElementById('sidebar');
+//const sidebar = document.getElementById('sidebar');
 const interactionArea = document.getElementById('interaction-area');
 
 let selectedCategoryBubble = '';
@@ -313,7 +313,7 @@ function toggleLike(heartIcon) {
 
 // Collapse/Expand the sidebar and interaction area
 collapseBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('collapsed');
+    
     interactionArea.classList.toggle('collapsed');  
     collapseBtn.classList.toggle('collapsed');  
     collapseBtn.innerHTML = interactionArea.classList.contains('collapsed') ? '&#x25B6;' : '&#x25C0;';

@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="css/general_style.css">
     <link rel="stylesheet" href="css/site_styles.css"> 
 
-    <link rel="stylesheet" href="style.css">
     <script type="module" src="pdfjs/build/pdf.mjs"></script>
 
     <link rel="stylesheet" href="./css/comments.css">
@@ -70,6 +69,21 @@
         #buttons {
             display: none;
         }
+
+        .preBtn, .nextBtn {
+            padding: 0.3rem 0.6rem; /* 減少內邊距，縮小按鈕尺寸 */
+            font-size: 1rem; /* 減少字體大小 */
+            width: auto; /* 將寬度設為自動，讓其根據內容調整 */
+            height: auto; /* 調整高度，讓其根據內容自適應 */
+            border-radius: 0.3125rem;
+            margin: 0 10px; /* 添加左右間距 */
+        }
+
+        .preBtn, .nextBtn {
+            margin-top: 1rem;
+            background-color: var(--brown);
+            color: var(--white);
+        }
     </style>
 </head>
 <body>
@@ -78,9 +92,9 @@
         <div class="col-mid-9">
             <div id="pdf-section">
                 <div id="navigation-buttons">
-                    <button id="prev-page" class="">Previous Page</button>
-                    <span id="page-info">Page: 1</span>
-                    <button id="next-page" class="">Next Page</button>
+                    <button id="prev-page" class="preBtn">&#x25C0; </button>
+                    <div id="page-info">&nbsp; Page: 1 &nbsp;</div>
+                    <button id="next-page" class="nextBtn">&#x25B6; </button>
                 </div>
                 <button id="toggle-comment">Add Comment</button>
                 <div id="buttons">
@@ -91,6 +105,9 @@
             <div id="viewer-container"></div>
         </div>
         <div class="col-mid-3">
+            <!-- Collapse Button -->
+            <button class="collapse-btn" id="collapse-btn">&#x25C0;</button>
+
             <!-- Content Area -->
             <section class="content" id="content-area">
                 <button class="add-question-btn" id="add-question-btn">Add Question</button>

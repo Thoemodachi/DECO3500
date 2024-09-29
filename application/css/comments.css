@@ -68,7 +68,7 @@ button:active {
     align-items: center;
     justify-content: center;
     position: fixed; /* Use fixed position to keep it at the top-right */
-    top: 10px; /* Distance from the top of the page */
+    top: 100px; /* Distance from the top of the page */
     right: 10px; /* Distance from the right side of the page */
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.3s ease;
