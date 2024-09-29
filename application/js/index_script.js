@@ -1,3 +1,13 @@
+// Current breadcrumb
+let breadcrumbPath = null;
+breadcrumb = document.getElementById('breadcrumb');
+
+function updateBreadcrumb() {
+    breadcrumb.innerHTML = `
+        Path:${breadcrumbPath}
+    `;
+}
+
 // Fetch course data from courses.json
 fetch('./data/courses.json')
     .then(response => response.json())
@@ -43,9 +53,8 @@ function displayFolders(course, folderType) {
     foldersContainer.innerHTML = ''; // Clear any existing folders
     filesContainer.innerHTML = ''; // Clear any existing files
 
-    console.log(course, folderType);
-    console.log(course.learnFolders);
-    console.log(course.assessementFolders);
+    breadcrumbPath = "Path" + course.courseName;
+    updateBreadcrumb();
 
     if (folderType === "learnFolders" && 
         course.learnFolders && 
@@ -58,6 +67,8 @@ function displayFolders(course, folderType) {
 
             // Add click event to load files when the folder is clicked
             folderElement.addEventListener('click', function() {
+                breadcrumbPath += '/' + folder.learnFolderName;  // Update breadcrumb with folder name
+                updateBreadcrumb();
                 displayLearnFiles(folder.learnFiles);
             });
 
@@ -74,6 +85,8 @@ function displayFolders(course, folderType) {
 
             // Add click event to load files when the folder is clicked
             folderElement.addEventListener('click', function() {
+                breadcrumbPath += '/' + folder.assessmentFolderName;  // Update breadcrumb with folder name
+                updateBreadcrumb();
                 displayAssessmentFiles(folder.assessmentFiles);
             });
 
@@ -98,10 +111,13 @@ function displayLearnFiles(files) {
             // Add click event to the fileElement div
             if (file.learnFilePath) {
                 fileElement.addEventListener('click', function() {
+                    breadcrumbPath += '/' + file.learnFileName;  // Update breadcrumb with file name
+                    updateBreadcrumb();  // Refresh breadcrumb display
+
                     // Redirect to collaboration.html with file name as URL parameter
                     const fileName = encodeURIComponent(file.learnFileName);
                     const filePath = encodeURIComponent(file.learnFilePath);
-                    window.location.href = `collaboration.html?fileName=${fileName}&filePath=${filePath}`;
+                    window.location.href = `collaboration.html?fileName=${fileName}&filePath=${filePath}&breadcrumb=${breadcrumb}`;
                 });
                 fileElement.style.cursor = 'pointer'; // Change cursor to pointer to indicate it's clickable
             } else {
@@ -130,10 +146,13 @@ function displayAssessmentFiles(files) {
             // Add click event to the fileElement div
             if (file.assessmentFilePath) {
                 fileElement.addEventListener('click', function() {
+                    breadcrumbPath += '/' + file.assessmentFileName;  // Update breadcrumb with file name
+                    updateBreadcrumb();  // Refresh breadcrumb display
+
                     // Redirect to collaboration.html with file name as URL parameter
                     const fileName = encodeURIComponent(file.assessmentFileName);
                     const filePath = encodeURIComponent(file.assessmentFilePath);
-                    window.location.href = `collaboration.html?fileName=${fileName}&filePath=${filePath}`;
+                    window.location.href = `collaboration.html?fileName=${fileName}&filePath=${filePath}&breadcrumb=${breadcrumb}`;
                 });
                 fileElement.style.cursor = 'pointer'; // Change cursor to pointer to indicate it's clickable
             } else {

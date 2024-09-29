@@ -57,7 +57,16 @@
         <main>
             <div class="col-12">
                 <div id="breadcrumb-container">
-                    <h3>breadcrumb</h3>
+                    <h3 id="breadcrumb">Path:</h3>
+                </div>
+            </div>
+            <div class="grid-row">
+                <div class="col-12 col-md-6 col-lg-6">
+                    <button class="button" id="learning-btn">Learning Resources</button>
+                </div>
+                <div class="col-12 col-md-6 col-lg-6">
+                    <button class="button" id="assessment-btn">Assessments</button>
+                </div>
                 </div>
             </div>
             <div class="grid-row">
@@ -65,30 +74,16 @@
                     <h1>My Courses</h1>
                     <div id="courses-container"></div>
                 </div>
-                <div class="col-12 col-md-9 col-lg-9">
-                    <div class="grid-row">
-                        <div class="col-12 col-md-4 col-lg-4">
-                            <button class="button" id="learning-btn">Learning Resources</button>
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-4">
-                            <button class="button" id="assessment-btn">Assessments</button>
-                        </div>
-                        <div class="col-12 col-md-4 col-lg-4">
-                        </div>
+                <div class="col-12 col-md-3 col-lg-3">
+                    <div class="folders">
+                        <h1>Folders</h1>
+                        <div id="folders-container"></div>
                     </div>
-                    <div class="grid-row">
-                        <div class="col-12 col-md-4 col-lg-4">
-                            <div class="folders">
-                                <h1>Folders</h1>
-                                <div id="folders-container"></div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-8 col-lg-8">
-                            <div class="files">
-                                <h1>Files</h1>
-                                <div id="files-container"></div>
-                            </div>
-                        </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-6">
+                    <div class="files">
+                        <h1>Files</h1>
+                        <div id="files-container"></div>
                     </div>
                 </div>
             </div>
