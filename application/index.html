@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+        <title>CO-ED3500 : Ask in the Doc</title>
+        <link rel="icon" href="media/images/learning-icon.png" type="image/x-icon">
+
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans+Mono:ital,wght@0,400..700;1,400..700&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mooli&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+
+        <!-- Stylesheet -->
+        <link rel="stylesheet" href="css/general_style.css">
+        <link rel="stylesheet" href="css/site_styles.css">
+        <link rel="stylesheet" href="css/index_styles.css">
+        
+
+        <!-- Java Script -->
+        <script src="https://kit.fontawesome.com/b8b73c33fc.js" crossorigin="anonymous"></script>
+    </head>
+    
+    <body>
+        <header>
+            <div class="grid-row nav-bar">
+                <div class="col-12 col-md-3 col-lg-3">
+                    <a id="logo" href="index.html"><img id="logo" src="" alt=""></a>
+                </div>
+                <div class="col-12 col-md-7 col-lg-7"></div>
+                <div class="col-12 col-md-1 col-lg-1">
+                    <div class="nav">
+                        <a href="notification.html" title="Notification" alt="Notification" aria-label="Notification">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                <path d="M224 0c-17.7 0-32 14.3-32 32l0 19.2C119 66 64 130.6 64 208l0 18.8c0 47-17.3 92.4-48.5 127.6l-7.4 8.3c-8.4 9.4-10.4 22.9-5.3 34.4S19.4 416 32 416l384 0c12.6 0 24-7.4 29.2-18.9s3.1-25-5.3-34.4l-7.4-8.3C401.3 319.2 384 273.9 384 226.8l0-18.8c0-77.4-55-142-128-156.8L256 32c0-17.7-14.3-32-32-32zm45.3 493.3c12-12 18.7-28.3 18.7-45.3l-64 0-64 0c0 17 6.7 33.3 18.7 45.3s28.3 18.7 45.3 18.7s33.3-6.7 45.3-18.7z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-12 col-md-1 col-lg-1">
+                    <div class="nav">
+                        <a href="account.html" title="Account" alt="Accuont" aria-label="Accuont">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                                <!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                                <path d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512l388.6 0c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304l-91.4 0z"/>
+                            </svg>
+                        </a>                    
+                    </div>
+                </div>
+            </div>
+        </header>
+        <main>
+            <div class="col-12">
+                <div id="breadcrumb-container">
+                    <h3>breadcrumb</h3>
+                </div>
+            </div>
+            <div class="grid-row">
+                <div class="col-12 col-md-3 col-lg-3">
+                    <h1>My Courses</h1>
+                    <div id="courses-container"></div>
+                </div>
+                <div class="col-12 col-md-9 col-lg-9">
+                    <div class="grid-row">
+                        <div class="col-12 col-md-4 col-lg-4">
+                            <button class="button" id="learning-btn">Learning Resources</button>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-4">
+                            <button class="button" id="assessment-btn">Assessments</button>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-4">
+                        </div>
+                    </div>
+                    <div class="grid-row">
+                        <div class="col-12 col-md-4 col-lg-4">
+                            <div class="folders">
+                                <h1>Folders</h1>
+                                <div id="folders-container"></div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-8 col-lg-8">
+                            <div class="files">
+                                <h1>Files</h1>
+                                <div id="files-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script src="js/index_script.js"></script>
+    </body>
+
+</html>

@@ -4,23 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Collaboration Page</title>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/general_style.css">
+    <link rel="stylesheet" href="css/site_styles.css"> 
+
     <link rel="stylesheet" href="style.css">
     <script type="module" src="pdfjs/build/pdf.mjs"></script>
+
+    <link rel="stylesheet" href="./css/comments.css">
+    <link rel="stylesheet" href="./css/site_styles.css">
     <style>
-        body {
+        #pdf-section {
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
-        }
-        #header {
-            width: 100%;
-            background: #f1f1f1;
-            padding: 10px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
         }
         #viewer-container {
             width: 100%;
@@ -75,20 +73,118 @@
     </style>
 </head>
 <body>
-    <div id="header">
-        <h1>PDF Collaboration</h1>
-        <div id="navigation-buttons">
-            <button id="prev-page">Previous Page</button>
-            <span id="page-info">Page: 1</span>
-            <button id="next-page">Next Page</button>
+    <header id="main-header"></header>
+    <div class="grid-row">
+        <div class="col-mid-9">
+            <div id="pdf-section">
+                <div id="navigation-buttons">
+                    <button id="prev-page" class="">Previous Page</button>
+                    <span id="page-info">Page: 1</span>
+                    <button id="next-page" class="">Next Page</button>
+                </div>
+                <button id="toggle-comment">Add Comment</button>
+                <div id="buttons">
+                    <button id="undo">Undo</button>
+                    <button id="redo">Redo</button>
+                </div>
+            </div>
+            <div id="viewer-container"></div>
         </div>
-        <button id="toggle-comment">Add Comment</button>
-        <div id="buttons">
-            <button id="undo">Undo</button>
-            <button id="redo">Redo</button>
+        <div class="col-mid-3">
+            <!-- Content Area -->
+            <section class="content" id="content-area">
+                <button class="add-question-btn" id="add-question-btn">Add Question</button>
+                <div id="question-buttons"></div> <!-- This is where dynamic question buttons will appear -->
+            </section>
+    
+            <!-- Interaction Area -->
+            <section class="interaction-area" id="interaction-area">
+                <!-- Bubbles Above Interaction Area -->
+                <div class="bubble-container">
+                    <div class="bubble" data-category="all">
+                        <div class="category-block block-gray"></div>All
+                    </div>
+                    <div class="bubble" data-category="urgent">
+                        <div class="category-block block-red"></div>Urgent
+                    </div>
+                    <div class="bubble" data-category="regular">
+                        <div class="category-block block-green"></div>Regular
+                    </div>
+                    <div class="bubble" data-category="followup">
+                        <div class="category-block block-blue"></div>Follow Up
+                    </div>
+                </div>
+    
+                <div id="questions-list">
+                    <!-- Questions will be dynamically added here -->
+                </div>
+            </section>
+    
+            <!-- Pop-up for Add/Edit Question -->
+            <div class="popup" id="add-edit-question-popup">
+                <div class="popup-header">
+                    <h3 id="popup-title">New Question</h3>
+                    <button class="close-btn" id="close-popup-btn">&times;</button>
+                </div>
+                <div class="popup-body">
+                    <label for="category">Select Category:</label>
+                    <div class="category-bubble-container" id="category-bubble-container">
+                        <div class="category-bubble" data-category="urgent">
+                            <div class="category-block block-red"></div>Urgent
+                        </div>
+                        <div class="category-bubble" data-category="regular">
+                            <div class="category-block block-green"></div>Regular
+                        </div>
+                        <div class="category-bubble" data-category="followup">
+                            <div class="category-block block-blue"></div>Follow Up
+                        </div>
+                    </div>
+    
+                    <!-- Message Textarea -->
+                    <label for="message">Message</label>
+                    <textarea id="message" rows="4" placeholder="Write your question here..."></textarea>
+    
+                    <!-- File Upload -->
+                    <label for="file-upload" class="file-upload">Upload File:</label>
+                    <input type="file" id="file-upload">
+    
+                    <!-- Pop-up Footer -->
+                    <div class="popup-footer">
+                        <button class="cancel-btn" id="cancel-btn">Cancel</button>
+                        <button class="submit-btn" id="submit-question-btn">Submit</button>
+                    </div>
+                </div>
+            </div>
+    
+            <!-- Pop-up for Reply -->
+            <div class="popup" id="reply-popup">
+                <div class="popup-header">
+                    <h3>Reply to Question</h3>
+                    <button class="close-btn" id="close-reply-popup">&times;</button>
+                </div>
+    
+                <div class="popup-body">
+                    <!-- Reply Message Textarea -->
+                    <label for="reply-message">Reply Message</label>
+                    <textarea id="reply-message" rows="4" placeholder="Write your reply here..."></textarea>
+    
+                    <!-- File Upload -->
+                    <label for="reply-file-upload" class="file-upload">Upload File:</label>
+                    <input type="file" id="reply-file-upload">
+    
+                    <!-- Pop-up Footer -->
+                    <div class="popup-footer">
+                        <button class="cancel-btn" id="cancel-reply-btn">Cancel</button>
+                        <button class="submit-btn" id="submit-reply-btn">Submit</button>
+                    </div>
+                </div>
+            </div>
+        
         </div>
     </div>
-    <div id="viewer-container"></div>
+
+
+
     <div id="comment-box">
         <textarea id="comment-input" placeholder="Type your comment here..."></textarea>
         <br>
@@ -96,6 +192,10 @@
         <button id="cancel-comment">Cancel</button>
     </div>
     <div id="comment-display"></div>
+
+
+    <script src="./js/header.js"></script>
+    <script src="./js/comments.js"></script>
 
     <script type="module">
         import { getDocument, GlobalWorkerOptions } from './pdfjs/build/pdf.mjs';
@@ -324,5 +424,6 @@
         });
 
     </script>
+
 </body>
 </html>

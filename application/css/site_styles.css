@@ -1,0 +1,372 @@
+:root {
+    --white: #FFFFFF;
+    --lgtwhite: #FFFBF0;
+    --black: #000000;
+    --bbblack: #505558;
+    --mintgreen: #E5F5E6;
+    --logogreen: #3A842A;
+    --lgtgreen: #3ab63f; /* in-between shade */
+    --darkgreen: #3A5327;
+    --lgtbrown: #784f3b;
+    --drkbrown: #6F4B39;
+    --brown: #483C33;
+    --lgtorange: #FAB875;
+    --labelyellow: #FCECBA;
+}
+
+/* responsive grid for .main-content */
+.grid-row {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr); /* creates 12 proportional columns */
+    grid-auto-rows: minmax(4vh,auto); /* auto generated rows: sets the min height to be 10% but will expand to content */
+    gap: 15px; /* the gap between columns - best in absolute values ie. pixels */
+    margin: 0vh 2vw; /* adds space on all sides but proportional to the screen */
+}
+
+/* Width of items in our grid-row */
+.col-1 { grid-column: span 1; }
+.col-2 { grid-column: span 2; }
+.col-3 { grid-column: span 3; }
+.col-4 { grid-column: span 4; }
+.col-5 { grid-column: span 5; }
+.col-6 { grid-column: span 6; }
+.col-7 { grid-column: span 7; }
+.col-8 { grid-column: span 8; }
+.col-9 { grid-column: span 9; }
+.col-10 { grid-column: span 10; }
+.col-11 { grid-column: span 11; }
+.col-12 { grid-column: span 12; }
+
+/* tablets/phones in landscape */
+.col-md-1 { grid-column: span 1; }
+.col-md-2 { grid-column: span 2; }
+.col-md-3 { grid-column: span 3; }
+.col-md-4 { grid-column: span 4; }
+.col-md-5 { grid-column: span 5; }
+.col-md-6 { grid-column: span 6; }
+.col-md-7 { grid-column: span 7; }  
+.col-md-8 { grid-column: span 8; }
+.col-md-9 { grid-column: span 9; }
+.col-md-10 { grid-column: span 10; }
+.col-md-11 { grid-column: span 11; }
+.col-md-12 { grid-column: span 12; }
+
+/* desktop and laptop */
+.col-1g-1 { grid-column: span 1; }
+.col-1g-2 { grid-column: span 2; }
+.col-1g-3 { grid-column: span 3; }
+.col-1g-4 { grid-column: span 4; }
+.col-1g-5 { grid-column: span 5; }
+.col-1g-6 { grid-column: span 6; }
+.col-1g-7 { grid-column: span 7; }
+.col-lg-8 { grid-column: span 8; }
+.col-1g-9 { grid-column: span 9; }
+.col-lg-10 { grid-column: span 10; }
+.col-lg-11 { grid-column: span 11; }
+.col-lg-12 { grid-column: span 12; }
+
+:focus-visible {  
+    outline-style: solid;
+    outline-color: transparent;
+    box-shadow: 0 0 0 2px var(--lgtwhite),
+                0 0 0 3px var(--lgtgreen),
+                0 0 0 4px var(--logogreen);
+    border-radius: 10px;
+}  
+
+body, html {
+    font-family: "Roboto Mono", "Segoe UI", "San Francisco", Arial, sans-serif;
+    color: var(--black);
+    line-height: 1.6;
+    font-size: 1rem;
+    background-color: var(--white);
+}
+
+body * {
+    font-family: "Roboto Mono", "Segoe UI", "San Francisco", Arial, sans-serif;
+    color: var(--black);
+    font-size: 1rem;
+}
+
+h1 {
+    font-size: 20px;
+    font-weight: bold;
+    padding: 2vh 2vw;
+    display: flex;
+    align-items: center;
+    letter-spacing: 10px;
+}
+
+h2 {
+    font-size: 16px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    margin: 0.5vh 0vw;
+}
+
+h3, summary {
+    font-size: 20px;
+    font-weight: 450;
+    letter-spacing: 1px;
+    margin: 7px 0px;
+}
+
+p {
+    font-size: 16px;
+    font-weight: 350;
+    line-height: 1.3;
+    letter-spacing: 1px;
+    margin: 3px 3px;
+}
+
+button {
+    font-family: "Roboto Mono", "Segoe UI", "San Francisco", Arial, sans-serif;
+    border: none;
+    padding: 1.2vh 1.5vw;
+    border-radius: 10px;
+    background-color: var(--logogreen);
+    color: var(--white);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
+    cursor: pointer;
+    text-align: center;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+/* Navigation Bar */
+.nav-bar {
+    align-items: center;
+    justify-content: center;
+    background-color: var(--mintgreen);
+    padding: 0.5rem;
+    margin: 0;
+}
+
+.nav a {
+    color: var(--black);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.nav a:hover {
+    fill: var(--bbblack);
+    transition: fill 0.2s ease;
+}
+
+.nav svg {
+    width: 25px;
+    height: 25px;
+}
+
+
+
+
+
+#logo {
+    height: 50px;
+    padding: 0 20px;
+}
+
+#topnav-open {
+    margin-right: 0.5rem;
+}
+
+#topnav-close {
+    align-self: flex-end;
+    margin-top: 15px;
+}
+
+#topnav-open, #topnav-close {
+    padding: 0px 20px;
+}
+
+.side-menu {
+    position: fixed;
+    top: 0;
+    right: -100vw;
+    width: 250px;
+    height: 100%;
+    transition: right 0.3s ease-in-out;
+    padding: 0.625rem;
+    background-color: var(--mintgreen);
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    z-index: 1000;
+}
+
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-content: center;
+    gap: min(32px, 2rem);
+}
+
+.top-menu-link {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--bbblack);
+    text-decoration: none;
+    text-align: center;
+    padding: 0.25rem 1rem;
+}
+
+/* Main Content */
+.flex-main-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.start-button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50vh;
+}
+
+.start-button-container > button {
+    gap: 4rem;
+    padding: 0.625rem 1.25rem;
+    font-size: 1.25rem;
+    font: 400;
+    width: 14rem;
+    border-radius: 0.3125rem;
+    /* transition: all 0.3s; */
+}
+
+/* Add floating effect to buttons */
+.primaryBtn, .secondaryBtn {
+    /*margin-top: 10rem;*/
+    padding: 0.625rem 1.25rem;
+    font-size: 1.25rem;
+    width: 14rem;
+    border-radius: 0.3125rem;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Add shadow effect */
+    transition: all 0.3s ease; /* Add transition effect */
+    animation: floating 3s ease-in-out infinite; /* Floating animation */
+}
+.primaryBtn {
+    margin-top: 5rem;
+    background-color: var(--logogreen);
+    color: var(--white);
+}
+
+.secondaryBtn {
+    margin-top: 1rem;
+    background-color: var(--brown);
+    color: var(--white);
+}
+
+.footer-menu{
+    position: absolute;
+    bottom: 0%;
+}
+
+
+/* Change shadow and color on hover */
+.primaryBtn:hover, .primaryBtn:focus, .secondaryBtn:hover, .secondaryBtn:focus {
+    background-color: var(--lgtgreen);
+    color: var(--white);
+    outline: 0.1875rem solid var(--lgtgreen);
+    outline-offset: 0.1875rem;
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
+    transform: translateY(-5px); /* Slight upward movement on hover */
+}
+
+
+/* For the About Page */
+
+#about-main-content {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding-top: 15vh;
+    margin: 20px;
+}
+
+.about-container {
+    padding: 20px;
+    margin: 10px;
+}
+
+.about-container > h2, .about-container > h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--darkgreen);
+    margin-top: 2rem;
+}
+
+.about-container > p {
+    padding-bottom: 1rem;
+}
+#schedule {
+    width: 100%;
+    padding: 20px;
+    text-align: left;
+}
+
+#schedule th {
+    padding: 20px;
+    padding: 2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+#schedule td {
+    padding-left: 2rem;
+}
+
+#sources-links {
+    display: flex;
+    flex-flow: column wrap;
+    padding-bottom: 1rem;
+}
+
+
+/* Responsive settings: Large screens */
+@media (min-width: 1024px) {
+    .nav {
+        grid-template-columns: repeat(3, 1fr); /* Three per row */
+        justify-items: center;
+    }
+}
+
+/* Responsive settings: Medium screens */
+@media (min-width: 600px) and (max-width: 1023px) {
+    .nav {
+        grid-template-columns: repeat(2, 1fr); /* Two per row */
+        justify-items: center;
+    }
+}
+
+
+/* Small screens */
+@media (max-width: 599px) {
+    .nav {
+        grid-template-columns: repeat(1, 1fr); /* One per row */
+        justify-items: center;
+    }
+    .grid-row {
+        grid-template-columns: repeat(1, 1fr); /* One proportional columns */
+    }
+}
+
+@media (max-height: 643px) {
+    .background {
+        padding-top: 20px;
+    }
+}

@@ -1,0 +1,83 @@
+/* General */
+body, html {
+    height: 100%;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Link to main page */
+.back-to-shop {
+    font-size: 16px;
+    color: #4a9871;
+    text-decoration: none;
+}
+
+.back-to-shop:hover {
+    text-decoration: underline;
+}
+
+/* Header styling */
+.login-h1 {
+    color: #4a9871;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+/* Input fields */
+.custom-input {
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 16px;
+}
+
+/* Login and signup buttons */
+.custom-login-btn, .custom-signup-btn {
+    border-radius: 8px;
+    padding: 10px 20px;
+    background-color: #4a9871;
+    color: white;
+    border: none;
+}
+
+.custom-login-btn:hover, .custom-signup-btn:hover {
+    background-color: #367257;
+}
+
+/* Forgot password link */
+.forgot-password {
+    color: #4a9871;
+    text-decoration: none;
+}
+
+.forgot-password:hover {
+    text-decoration: underline;
+}
+
+/* Social icons */
+.social-login i {
+    font-size: 24px;
+    color: #4a9871;
+    margin-right: 15px;
+}
+
+/* Image section */
+.image-section {
+    background-image: url('../img/krishna-mantripragada-psMKYwfrJXQ-unsplash.jpg'); /* Replace with your image URL */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Circular border around image */
+.image-section::before {
+    content: "";
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+}
