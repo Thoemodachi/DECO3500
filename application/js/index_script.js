@@ -53,7 +53,7 @@ function displayFolders(course, folderType) {
     foldersContainer.innerHTML = ''; // Clear any existing folders
     filesContainer.innerHTML = ''; // Clear any existing files
 
-    breadcrumbPath = "Path" + course.courseName;
+    breadcrumbPath = course.courseName;
     updateBreadcrumb();
 
     if (folderType === "learnFolders" && 
@@ -115,9 +115,10 @@ function displayLearnFiles(files) {
                     updateBreadcrumb();  // Refresh breadcrumb display
 
                     // Redirect to collaboration.html with file name as URL parameter
-                    const fileName = encodeURIComponent(file.learnFileName);
-                    const filePath = encodeURIComponent(file.learnFilePath);
-                    window.location.href = `collaboration.html?fileName=${fileName}&filePath=${filePath}&breadcrumb=${breadcrumb}`;
+                    const fileNameEncoded = encodeURIComponent(file.learnFileName);
+                    const filePathEncoded = encodeURIComponent(file.learnFilePath);
+                    const breadcrumbEncoded = encodeURIComponent(breadcrumbPath);
+                    window.location.href = `collaboration.html?fileName=${fileNameEncoded}&filePath=${filePathEncoded}&breadcrumb=${breadcrumbEncoded}`;
                 });
                 fileElement.style.cursor = 'pointer'; // Change cursor to pointer to indicate it's clickable
             } else {
@@ -150,9 +151,10 @@ function displayAssessmentFiles(files) {
                     updateBreadcrumb();  // Refresh breadcrumb display
 
                     // Redirect to collaboration.html with file name as URL parameter
-                    const fileName = encodeURIComponent(file.assessmentFileName);
-                    const filePath = encodeURIComponent(file.assessmentFilePath);
-                    window.location.href = `collaboration.html?fileName=${fileName}&filePath=${filePath}&breadcrumb=${breadcrumb}`;
+                    const fileNameEncoded = encodeURIComponent(file.assessmentFileName);
+                    const filePathEncoded = encodeURIComponent(file.assessmentFilePath);
+                    const breadcrumbEncoded = encodeURIComponent(breadcrumbPath);
+                    window.location.href = `collaboration.html?fileName=${fileNameEncoded}&filePath=${filePathEncoded}&breadcrumb=${breadcrumbEncoded}`;
                 });
                 fileElement.style.cursor = 'pointer'; // Change cursor to pointer to indicate it's clickable
             } else {

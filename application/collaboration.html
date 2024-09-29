@@ -1,446 +1,707 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Collaboration Page</title>
-    <!-- Stylesheet -->
-    <link rel="stylesheet" href="css/general_style.css">
-    <link rel="stylesheet" href="css/site_styles.css"> 
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script type="module" src="pdfjs/build/pdf.mjs"></script>
-
-    <link rel="stylesheet" href="./css/comments.css">
-    <link rel="stylesheet" href="./css/site_styles.css">
-    <style>
-        #pdf-section {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        #viewer-container {
-            width: 100%;
-            height: calc(100vh - 100px);
-            margin-top: 50px;
-            position: relative;
-            z-index: 1; /* Lower z-index for the viewer */
-        }
-        #comment-box {
-            position: fixed;
-            right: 20px;
-            top: 60px;
-            width: 200px;
-            display: none;
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid #ccc;
-            padding: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            z-index: 1001;
-        }
-        #comment-display {
-            position: fixed;
-            right: 20px;
-            top: 100px;
-            width: 200px;
-            display: none;
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid #ccc;
-            padding: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            z-index: 1001;
-        }
-        .comment-marker {
-            position: absolute;
-            border-radius: 50%;
-            width: 12px;
-            height: 12px;
-            cursor: pointer;
-            text-align: center;
-            line-height: 12px;
-            z-index: 9999; /* Set to a high value to ensure markers are on top */
-        }
-
-        #navigation-buttons {
-            display: flex;
-            align-items: center;
-            margin: 10px 0;
-        }
-        #buttons {
-            display: none;
-        }
-
-        .preBtn, .nextBtn {
-            padding: 0.3rem 0.6rem; /* 減少內邊距，縮小按鈕尺寸 */
-            font-size: 1rem; /* 減少字體大小 */
-            width: auto; /* 將寬度設為自動，讓其根據內容調整 */
-            height: auto; /* 調整高度，讓其根據內容自適應 */
-            border-radius: 0.3125rem;
-            margin: 0 10px; /* 添加左右間距 */
-        }
-
-        .preBtn, .nextBtn {
-            margin-top: 1rem;
-            background-color: var(--brown);
-            color: var(--white);
-        }
-    </style>
-</head>
-<body>
-    <header id="main-header"></header>
-    <div class="grid-row">
-        <div class="col-mid-9">
-            <div id="pdf-section">
-                <div id="navigation-buttons">
-                    <button id="prev-page" class="preBtn">&#x25C0; </button>
-                    <div id="page-info">&nbsp; Page: 1 &nbsp;</div>
-                    <button id="next-page" class="nextBtn">&#x25B6; </button>
-                </div>
-                <button id="toggle-comment">Add Comment</button>
-                <div id="buttons">
-                    <button id="undo">Undo</button>
-                    <button id="redo">Redo</button>
-                </div>
-            </div>
-            <div id="viewer-container"></div>
-        </div>
-        <div class="col-mid-3">
-            <!-- Collapse Button -->
-            <button class="collapse-btn" id="collapse-btn">&#x25C0;</button>
-
-            <!-- Content Area -->
-            <section class="content" id="content-area">
-                <button class="add-question-btn" id="add-question-btn">Add Question</button>
-                <div id="question-buttons"></div> <!-- This is where dynamic question buttons will appear -->
-            </section>
-    
-            <!-- Interaction Area -->
-            <section class="interaction-area" id="interaction-area">
-                <!-- Bubbles Above Interaction Area -->
-                <div class="bubble-container">
-                    <div class="bubble" data-category="all">
-                        <div class="category-block block-gray"></div>All
-                    </div>
-                    <div class="bubble" data-category="urgent">
-                        <div class="category-block block-red"></div>Urgent
-                    </div>
-                    <div class="bubble" data-category="regular">
-                        <div class="category-block block-green"></div>Regular
-                    </div>
-                    <div class="bubble" data-category="followup">
-                        <div class="category-block block-blue"></div>Follow Up
-                    </div>
-                </div>
-    
-                <div id="questions-list">
-                    <!-- Questions will be dynamically added here -->
-                </div>
-            </section>
-    
-            <!-- Pop-up for Add/Edit Question -->
-            <div class="popup" id="add-edit-question-popup">
-                <div class="popup-header">
-                    <h3 id="popup-title">New Question</h3>
-                    <button class="close-btn" id="close-popup-btn">&times;</button>
-                </div>
-                <div class="popup-body">
-                    <label for="category">Select Category:</label>
-                    <div class="category-bubble-container" id="category-bubble-container">
-                        <div class="category-bubble" data-category="urgent">
-                            <div class="category-block block-red"></div>Urgent
-                        </div>
-                        <div class="category-bubble" data-category="regular">
-                            <div class="category-block block-green"></div>Regular
-                        </div>
-                        <div class="category-bubble" data-category="followup">
-                            <div class="category-block block-blue"></div>Follow Up
-                        </div>
-                    </div>
-    
-                    <!-- Message Textarea -->
-                    <label for="message">Message</label>
-                    <textarea id="message" rows="4" placeholder="Write your question here..."></textarea>
-    
-                    <!-- File Upload -->
-                    <label for="file-upload" class="file-upload">Upload File:</label>
-                    <input type="file" id="file-upload">
-    
-                    <!-- Pop-up Footer -->
-                    <div class="popup-footer">
-                        <button class="cancel-btn" id="cancel-btn">Cancel</button>
-                        <button class="submit-btn" id="submit-question-btn">Submit</button>
-                    </div>
-                </div>
-            </div>
-    
-            <!-- Pop-up for Reply -->
-            <div class="popup" id="reply-popup">
-                <div class="popup-header">
-                    <h3>Reply to Question</h3>
-                    <button class="close-btn" id="close-reply-popup">&times;</button>
-                </div>
-    
-                <div class="popup-body">
-                    <!-- Reply Message Textarea -->
-                    <label for="reply-message">Reply Message</label>
-                    <textarea id="reply-message" rows="4" placeholder="Write your reply here..."></textarea>
-    
-                    <!-- File Upload -->
-                    <label for="reply-file-upload" class="file-upload">Upload File:</label>
-                    <input type="file" id="reply-file-upload">
-    
-                    <!-- Pop-up Footer -->
-                    <div class="popup-footer">
-                        <button class="cancel-btn" id="cancel-reply-btn">Cancel</button>
-                        <button class="submit-btn" id="submit-reply-btn">Submit</button>
-                    </div>
-                </div>
-            </div>
+        <title>PDF Collaboration Page</title>
+        <link rel="icon" href="media/images/learning-icon.png" type="image/x-icon">
         
-        </div>
-    </div>
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans+Mono:ital,wght@0,400..700;1,400..700&display=swap">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mooli&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700">
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 
+        <!-- Stylesheet -->
+        <link rel="stylesheet" href="css/general_style.css">
+        <link rel="stylesheet" href="css/site_styles.css">
+        <link rel="stylesheet" href="css/collaboration.css">
 
+        <!-- Java Script -->
+        <script type="module" src="pdfjs/build/pdf.mjs"></script>
+    </head>
 
-    <div id="comment-box">
-        <textarea id="comment-input" placeholder="Type your comment here..."></textarea>
-        <br>
-        <button id="save-comment">Save</button>
-        <button id="cancel-comment">Cancel</button>
-    </div>
-    <div id="comment-display"></div>
+    <body>
+        <header id="main-header"></header>
+        <main>
+            <div class="col-12">
+                <div id="breadcrumb-container">
+                    <h3 id="breadcrumb"></h3>
+                </div>
+            </div>
+            <div class="grid-row">
+                <div class="col-mid-9">
+                    <div id="pdf-section">
+                        <div id="navigation-buttons">
+                            <button id="prev-page" class="preBtn">&#x25C0; </button>
+                            <div id="page-info">&nbsp; Page: 1 &nbsp;</div>
+                            <button id="next-page" class="nextBtn">&#x25B6; </button>
+                        </div>
+                    </div>
+                    <div id="viewer-container"></div>
+                </div>
+                <div class="col-mid-3">
+                    <!-- Collapse Button -->
+                    <button class="collapse-btn" id="collapse-btn">&#x25C0;</button>
 
-
-    <script src="./js/header.js"></script>
-    <script src="./js/comments.js"></script>
-
-    <script type="module">
-        import { getDocument, GlobalWorkerOptions } from './pdfjs/build/pdf.mjs';
-
-        GlobalWorkerOptions.workerSrc = './pdfjs/build/pdf.worker.mjs';
-
-        let viewerElement; // Declare viewerElement globally
-        const commentBox = document.getElementById('comment-box');
-        const commentInput = document.getElementById('comment-input');
-        const toggleCommentButton = document.getElementById('toggle-comment');
-        const buttonsContainer = document.getElementById('buttons');
-        const pageInfo = document.getElementById('page-info');
-        const commentDisplay = document.getElementById('comment-display');
-        const prevPageButton = document.getElementById('prev-page');
-        const nextPageButton = document.getElementById('next-page');
-
-        let drawingMode = false;
-        let currentDrawing = [];
-        let pdfDoc = null;
-        let currentPage = 1;
-        const pagesData = {}; // Store all drawings and comments for each page
-        let commentIdCounter = 1; // Counter for unique comment IDs
-
-        // Load the PDF document
-        const url = 'media/files/assignment_1.pdf';
-        getDocument(url).promise.then(pdf => {
-            pdfDoc = pdf;
-            renderPage(currentPage);
-        });
-
-        async function renderPage(pageNumber) {
-            if (!viewerElement) {
-                viewerElement = document.getElementById('viewer-container'); // Initialize if not set
-            }
-
-            // Clear previous page content but keep viewerElement
-            viewerElement.innerHTML = '';
-
-            // Create and set up a new canvas
-            const canvas = document.createElement('canvas');
-            const page = await pdfDoc.getPage(pageNumber);
-            const viewport = page.getViewport({ scale: 1 });
-            canvas.width = viewport.width;
-            canvas.height = viewport.height;
-
-            // Append the new canvas to the viewer
-            viewerElement.appendChild(canvas);
-
-            // Get the drawing context
-            const context = canvas.getContext('2d');
-
-            // Render the PDF page onto the canvas
-            await page.render({ canvasContext: context, viewport: viewport }).promise;
-
-            // Retrieve and render drawings and markers for the current page
-            if (pagesData[pageNumber]) {
-                pagesData[pageNumber].drawings.forEach(drawing => {
-                    drawLine(drawing.points);
-                });
-                pagesData[pageNumber].markers.forEach(marker => {
-                    createCommentMarker(marker.id, marker.position, marker.color);
-                });
-            }
-
-            // Add event listeners for drawing on the newly created canvas
-            canvas.addEventListener('mousedown', startDrawing);
-            canvas.addEventListener('mouseup', stopDrawing);
-            canvas.addEventListener('mousemove', draw);
-
-            updatePageInfo();
-        }
-
-
-        function updatePageInfo() {
-            pageInfo.textContent = `Page: ${currentPage}`;
-        }
-
-        function startDrawing(event) {
-            if (drawingMode) {
-                currentDrawing = [{ x: event.offsetX, y: event.offsetY }];
-                const context = viewerElement.lastChild.getContext('2d');
-                context.beginPath();
-                context.moveTo(event.offsetX, event.offsetY);
-            }
-        }
-
-        function stopDrawing(event) {
-            if (drawingMode && currentDrawing.length > 0) {
-                currentDrawing.push({ x: event.offsetX, y: event.offsetY });
-                drawLine(currentDrawing);
-
-                // Save the drawing for the current page
-                const commentId = `#${commentIdCounter}`;
-                saveDrawing(commentId, currentDrawing);
-
-                currentDrawing = []; // Reset drawing state
-            }
-        }
-
-        function draw(event) {
-            if (drawingMode && currentDrawing.length > 0) {
-                const context = viewerElement.lastChild.getContext('2d');
-                context.lineTo(event.offsetX, event.offsetY);
-                context.stroke();
-            }
-        }
-
-        function drawLine(points) {
-            if (points.length < 2) return;
-
-            const context = viewerElement.lastChild.getContext('2d');
-            context.beginPath();
-            context.moveTo(points[0].x, points[0].y);
-            for (const point of points) {
-                context.lineTo(point.x, point.y);
-            }
-            context.stroke();
-        }
-
-        function createCommentMarker(commentId, position, color = 'yellow') {
-            const marker = document.createElement('div');
-            marker.className = 'comment-marker';
-            marker.style.left = `${(viewerElement.clientWidth / 2) - 6}px`; // Center horizontally
-            marker.style.top = `${(viewerElement.clientHeight / 2) - 6}px`; // Center vertically
-            marker.style.backgroundColor = color; // Set color
-
-            marker.onclick = () => toggleCommentDisplay(commentId); // Toggle comment display on click
-
-            if (!pagesData[currentPage]) {
-                pagesData[currentPage] = { drawings: [], comments: [], markers: [] }; // Initialize if undefined
-            }
-            pagesData[currentPage].markers.push({ id: commentId, position: { y: viewerElement.clientHeight / 2 }, color });
-
-            viewerElement.appendChild(marker); // Append marker to the viewer
-        }
-
-        let isCommentVisible = false; // Track the visibility of the comment
-
-        function toggleCommentDisplay(commentId) {
-            const comment = pagesData[currentPage].comments.find(c => c.id === commentId);
+                    <button id="toggle-comment">Add Comment</button>
+                    <div id="buttons">
+                        <button id="undo">Undo</button>
+                        <button id="redo">Redo</button>
+                    </div>
+                    <div id="question-buttons"></div>
             
-            if (isCommentVisible && commentDisplay.innerText.includes(commentId)) {
-                // If the comment is already visible and clicked again, hide it
-                commentDisplay.style.display = 'none';
-                isCommentVisible = false; // Update the visibility state
-            } else {
-                // Show the comment if it's not already visible
-                if (comment) {
-                    commentDisplay.innerText = `${commentId}: ${comment.text}`; // Set comment text with ID
-                    commentDisplay.style.display = 'block'; // Show comment box
-                    isCommentVisible = true; // Update the visibility state
+                    <!-- Interaction Area -->
+                    <section class="interaction-area" id="interaction-area">
+                        <!-- Bubbles Above Interaction Area -->
+                        <div class="bubble-container">
+                            <div class="bubble" data-category="all">
+                                <div class="category-block block-gray"></div>All
+                            </div>
+                            <div class="bubble" data-category="urgent">
+                                <div class="category-block block-red"></div>Urgent
+                            </div>
+                            <div class="bubble" data-category="regular">
+                                <div class="category-block block-green"></div>Regular
+                            </div>
+                            <div class="bubble" data-category="followup">
+                                <div class="category-block block-blue"></div>Follow Up
+                            </div>
+                        </div>
+            
+                        <div id="questions-list">
+                            <!-- Questions will be dynamically added here -->
+                        </div>
+                    </section>
+            
+                    <!-- Pop-up for Add/Edit Question -->
+                    <div class="popup" id="add-edit-question-popup">
+                        <div class="popup-header">
+                            <h3 id="popup-title">New Question</h3>
+                            <button class="close-btn" id="close-popup-btn">&times;</button>
+                        </div>
+                        <div class="popup-body">
+                            <label for="category">Select Category:</label>
+                            <div class="category-bubble-container" id="category-bubble-container">
+                                <div class="category-bubble" data-category="urgent">
+                                    <div class="category-block block-red"></div>Urgent
+                                </div>
+                                <div class="category-bubble" data-category="regular">
+                                    <div class="category-block block-green"></div>Regular
+                                </div>
+                                <div class="category-bubble" data-category="followup">
+                                    <div class="category-block block-blue"></div>Follow Up
+                                </div>
+                            </div>
+            
+                            <!-- Message Textarea -->
+                            <label for="message">Message</label>
+                            <textarea id="message" rows="4" placeholder="Write your question here..."></textarea>
+            
+                            <!-- File Upload -->
+                            <label for="file-upload" class="file-upload">Upload File:</label>
+                            <input type="file" id="file-upload">
+            
+                            <!-- Pop-up Footer -->
+                            <div class="popup-footer">
+                                <button class="cancel-btn" id="cancel-btn">Cancel</button>
+                                <button class="submit-btn" id="submit-question-btn">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Pop-up for Reply -->
+                    <div class="popup" id="reply-popup">
+                        <div class="popup-header">
+                            <h3>Reply to Question</h3>
+                            <button class="close-btn" id="close-reply-popup">&times;</button>
+                        </div>
+            
+                        <div class="popup-body">
+                            <!-- Reply Message Textarea -->
+                            <label for="reply-message">Reply Message</label>
+                            <textarea id="reply-message" rows="4" placeholder="Write your reply here..."></textarea>
+            
+                            <!-- File Upload -->
+                            <label for="reply-file-upload" class="file-upload">Upload File:</label>
+                            <input type="file" id="reply-file-upload">
+            
+                            <!-- Pop-up Footer -->
+                            <div class="popup-footer">
+                                <button class="cancel-btn" id="cancel-reply-btn">Cancel</button>
+                                <button class="submit-btn" id="submit-reply-btn">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                
+                </div>
+            </div>
+
+            <div id="comment-box">
+                <textarea id="comment-input" placeholder="Type your comment here..."></textarea>
+                <br>
+                <button id="save-comment">Save</button>
+                <button id="cancel-comment">Cancel</button>
+            </div>
+            <div id="comment-display"></div>
+        </main>
+
+        <script src="js/header.js"></script>
+        <script src="js/collaboration_script.js"></script>
+
+        <script type="module">
+            import { getDocument, GlobalWorkerOptions } from './pdfjs/build/pdf.mjs';
+
+            GlobalWorkerOptions.workerSrc = './pdfjs/build/pdf.worker.mjs';
+
+            let viewerElement; // Declare viewerElement globally
+            const commentBox = document.getElementById('comment-box');
+            const commentInput = document.getElementById('comment-input');
+            const toggleCommentButton = document.getElementById('toggle-comment');
+            const buttonsContainer = document.getElementById('buttons');
+            const pageInfo = document.getElementById('page-info');
+            const commentDisplay = document.getElementById('comment-display');
+            const prevPageButton = document.getElementById('prev-page');
+            const nextPageButton = document.getElementById('next-page');
+
+            let drawingMode = false;
+            let currentDrawing = [];
+            let pdfDoc = null;
+            let currentPage = 1;
+            const pagesData = {}; // Store all drawings and comments for each page
+            let commentIdCounter = 1; // Counter for unique comment IDs
+
+            // Load the PDF document
+            const url = 'media/files/assignment_1.pdf';
+            getDocument(url).promise.then(pdf => {
+                pdfDoc = pdf;
+                renderPage(currentPage);
+            });
+
+            async function renderPage(pageNumber) {
+                if (!viewerElement) {
+                    viewerElement = document.getElementById('viewer-container'); // Initialize if not set
+                }
+
+                // Clear previous page content but keep viewerElement
+                viewerElement.innerHTML = '';
+
+                // Create and set up a new canvas
+                const canvas = document.createElement('canvas');
+                const page = await pdfDoc.getPage(pageNumber);
+                const viewport = page.getViewport({ scale: 1 });
+                canvas.width = viewport.width;
+                canvas.height = viewport.height;
+
+                // Append the new canvas to the viewer
+                viewerElement.appendChild(canvas);
+
+                // Get the drawing context
+                const context = canvas.getContext('2d');
+
+                // Render the PDF page onto the canvas
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                // Retrieve and render drawings and markers for the current page
+                if (pagesData[pageNumber]) {
+                    pagesData[pageNumber].drawings.forEach(drawing => {
+                        drawLine(drawing.points);
+                    });
+                    pagesData[pageNumber].markers.forEach(marker => {
+                        createCommentMarker(marker.id, marker.position, marker.color);
+                    });
+                }
+
+                // Add event listeners for drawing on the newly created canvas
+                canvas.addEventListener('mousedown', startDrawing);
+                canvas.addEventListener('mouseup', stopDrawing);
+                canvas.addEventListener('mousemove', draw);
+
+                updatePageInfo();
+            }
+
+
+            function updatePageInfo() {
+                pageInfo.textContent = `Page: ${currentPage}`;
+            }
+
+            function startDrawing(event) {
+                if (drawingMode) {
+                    currentDrawing = [{ x: event.offsetX, y: event.offsetY }];
+                    const context = viewerElement.lastChild.getContext('2d');
+                    context.beginPath();
+                    context.moveTo(event.offsetX, event.offsetY);
                 }
             }
-        }
 
-        function saveDrawing(commentId, points) {
-            if (!pagesData[currentPage]) {
-                pagesData[currentPage] = { drawings: [], comments: [], markers: [] };
+            function stopDrawing(event) {
+                if (drawingMode && currentDrawing.length > 0) {
+                    currentDrawing.push({ x: event.offsetX, y: event.offsetY });
+                    drawLine(currentDrawing);
+
+                    // Save the drawing for the current page
+                    const commentId = `#${commentIdCounter}`;
+                    saveDrawing(commentId, currentDrawing);
+
+                    currentDrawing = []; // Reset drawing state
+                }
             }
-            pagesData[currentPage].drawings.push({ commentId, points });
-        }
 
-        function displayAllMarkers() {
-            const allMarkers = pagesData[currentPage].markers;
-            console.log("All Markers on Page " + currentPage + ":");
-            allMarkers.forEach(marker => {
-                console.log(`ID: ${marker.id}, Position: ${marker.position.y}, Color: ${marker.color}`);
+            function draw(event) {
+                if (drawingMode && currentDrawing.length > 0) {
+                    const context = viewerElement.lastChild.getContext('2d');
+                    context.lineTo(event.offsetX, event.offsetY);
+                    context.stroke();
+                }
+            }
+
+            function drawLine(points) {
+                if (points.length < 2) return;
+
+                const context = viewerElement.lastChild.getContext('2d');
+                context.beginPath();
+                context.moveTo(points[0].x, points[0].y);
+                for (const point of points) {
+                    context.lineTo(point.x, point.y);
+                }
+                context.stroke();
+            }
+
+            function createCommentMarker(commentId, position, color = 'yellow') {
+                const marker = document.createElement('div');
+                marker.className = 'comment-marker';
+                marker.style.left = `${(viewerElement.clientWidth / 2) - 6}px`; // Center horizontally
+                marker.style.top = `${(viewerElement.clientHeight / 2) - 6}px`; // Center vertically
+                marker.style.backgroundColor = color; // Set color
+
+                marker.onclick = () => toggleCommentDisplay(commentId); // Toggle comment display on click
+
+                if (!pagesData[currentPage]) {
+                    pagesData[currentPage] = { drawings: [], comments: [], markers: [] }; // Initialize if undefined
+                }
+                pagesData[currentPage].markers.push({ id: commentId, position: { y: viewerElement.clientHeight / 2 }, color });
+
+                viewerElement.appendChild(marker); // Append marker to the viewer
+            }
+
+            let isCommentVisible = false; // Track the visibility of the comment
+
+            function toggleCommentDisplay(commentId) {
+                const comment = pagesData[currentPage].comments.find(c => c.id === commentId);
+                
+                if (isCommentVisible && commentDisplay.innerText.includes(commentId)) {
+                    // If the comment is already visible and clicked again, hide it
+                    commentDisplay.style.display = 'none';
+                    isCommentVisible = false; // Update the visibility state
+                } else {
+                    // Show the comment if it's not already visible
+                    if (comment) {
+                        commentDisplay.innerText = `${commentId}: ${comment.text}`; // Set comment text with ID
+                        commentDisplay.style.display = 'block'; // Show comment box
+                        isCommentVisible = true; // Update the visibility state
+                    }
+                }
+            }
+
+            function saveDrawing(commentId, points) {
+                if (!pagesData[currentPage]) {
+                    pagesData[currentPage] = { drawings: [], comments: [], markers: [] };
+                }
+                pagesData[currentPage].drawings.push({ commentId, points });
+            }
+
+            function displayAllMarkers() {
+                const allMarkers = pagesData[currentPage].markers;
+                console.log("All Markers on Page " + currentPage + ":");
+                allMarkers.forEach(marker => {
+                    console.log(`ID: ${marker.id}, Position: ${marker.position.y}, Color: ${marker.color}`);
+                });
+            }
+
+            function saveComment(commentId, text, position) {
+                if (!pagesData[currentPage]) {
+                    pagesData[currentPage] = { drawings: [], comments: [], markers: [] };
+                }
+                pagesData[currentPage].comments.push({ id: commentId, text, position });
+                const averageY = (position.y + 20) / 2; // Average Y for marker placement
+                pagesData[currentPage].markers.push({ id: commentId, position: { y: averageY }, color: 'yellow' });
+                createCommentMarker(commentId, { y: averageY }); // Create marker immediately after saving the comment
+                displayAllMarkers(); // Print all markers after saving a new comment
+            }
+
+            toggleCommentButton.addEventListener('click', () => {
+                drawingMode = !drawingMode;
+                //commentBox.style.display = drawingMode ? 'block' : 'none';
+                addEditPopup.style.display = drawingMode ? 'block' : 'none';
+                //buttonsContainer.style.display = drawingMode ? 'block' : 'none';
+                //toggleCommentButton.textContent = drawingMode ? 'Exit Comment Mode' : 'Add Comment';
+                openAddEditPopup();
             });
-        }
 
-        function saveComment(commentId, text, position) {
-            if (!pagesData[currentPage]) {
-                pagesData[currentPage] = { drawings: [], comments: [], markers: [] };
+
+            // Sherry start
+
+            // Data storage for questions and replies
+            let questionsData = [];
+            let questionCount = 0; // Tracks the number of questions added
+            let currentFilter = 'all'; // To track selected category filter
+            let isEditing = false; // Tracks if we are editing an existing question
+            let editingQuestionId = null; // Stores the ID of the question being edited
+
+            // DOM element references
+            const addQuestionBtn = document.getElementById('add-question-btn');
+            const questionButtonsDiv = document.getElementById('question-buttons');
+            const addEditPopup = document.getElementById('add-edit-question-popup');
+            const closePopupBtn = document.getElementById('close-popup-btn');
+            const submitQuestionBtn = document.getElementById('submit-question-btn');
+            const messageInput = document.getElementById('message');
+            const fileUploadInput = document.getElementById('file-upload');
+            const questionsList = document.getElementById('questions-list');
+            const replyPopup = document.getElementById('reply-popup');
+            const replyMessageInput = document.getElementById('reply-message');
+            const replyFileUploadInput = document.getElementById('reply-file-upload');
+            const submitReplyBtn = document.getElementById('submit-reply-btn');
+            const collapseBtn = document.getElementById('collapse-btn');
+            //const sidebar = document.getElementById('sidebar');
+            const interactionArea = document.getElementById('interaction-area');
+
+            let selectedCategoryBubble = '';
+
+            // Function to open Add/Edit Question popup
+            function openAddEditPopup(isEdit = false, questionId = null) {
+                isEditing = isEdit;
+                editingQuestionId = questionId;
+
+                if (isEdit) {
+                    const question = questionsData.find(q => q.id === questionId);
+                    if (question) {
+                        document.getElementById('popup-title').textContent = 'Edit Question';
+                        messageInput.value = question.message; // Pre-fill message
+                        selectedCategoryBubble = question.category;
+                        highlightCategoryBubble(selectedCategoryBubble);
+                    }
+                } else {
+                    document.getElementById('popup-title').textContent = 'New Question';
+                    messageInput.value = ''; // Clear message for new question
+                    selectedCategoryBubble = '';
+                    highlightCategoryBubble(selectedCategoryBubble);
+                }
+                fileUploadInput.value = ''; // Clear file input
             }
-            pagesData[currentPage].comments.push({ id: commentId, text, position });
-            const averageY = (position.y + 20) / 2; // Average Y for marker placement
-            pagesData[currentPage].markers.push({ id: commentId, position: { y: averageY }, color: 'yellow' });
-            createCommentMarker(commentId, { y: averageY }); // Create marker immediately after saving the comment
-            displayAllMarkers(); // Print all markers after saving a new comment
-        }
 
-        toggleCommentButton.addEventListener('click', () => {
-            drawingMode = !drawingMode;
-            commentBox.style.display = drawingMode ? 'block' : 'none';
-            buttonsContainer.style.display = drawingMode ? 'block' : 'none';
-            toggleCommentButton.textContent = drawingMode ? 'Exit Comment Mode' : 'Add Comment';
-        });
+            // Function to highlight selected category bubble
+            function highlightCategoryBubble(selectedCategoryBubble) {
+                const categoryBubbles = document.querySelectorAll('.category-bubble');
+                categoryBubbles.forEach(bubble => {
+                    bubble.classList.remove('selected');
+                    if (bubble.getAttribute('data-category') === selectedCategoryBubble) {
+                        bubble.classList.add('selected');
+                    }
+                });
+            }
 
-        // Update the event listener for saving comments
-        document.getElementById('save-comment').addEventListener('click', () => {
-            const commentText = commentInput.value.trim();
-            if (commentText) {
-                const commentId = `#${commentIdCounter++}`; // Generate unique comment ID
-                const commentPosition = { x: viewerElement.clientWidth - 30, y: 20 }; // Fixed x, dynamic y
+            // Function to filter questions based on selected category
+            function filterQuestionsByCategory(category) {
+                currentFilter = category;
+                renderQuestions();  // Re-render questions with filter applied
+            }
 
-                saveComment(commentId, commentText, commentPosition);
+            // Event listener for category bubble selection in interaction area
+            document.querySelectorAll('.bubble').forEach(bubble => {
+                bubble.addEventListener('click', () => {
+                    const category = bubble.getAttribute('data-category');
+                    filterQuestionsByCategory(category);
+                });
+            });
+
+            // Event listener for category bubble selection in Add Question popup
+            document.querySelectorAll('.category-bubble').forEach(bubble => {
+                bubble.addEventListener('click', () => {
+                    selectedCategoryBubble = bubble.getAttribute('data-category');
+                    highlightCategoryBubble(selectedCategoryBubble);
+                });
+            });
+
+            // Close popup when close button is clicked
+            closePopupBtn.addEventListener('click', () => addEditPopup.style.display = 'none');
+
+            // Submit new or edited question
+            submitQuestionBtn.addEventListener('click', () => {
+                const message = messageInput.value.trim();
+                const file = fileUploadInput.files[0];
+
+                if (!message || !selectedCategoryBubble) {
+                    alert('Please enter a message and select a category.');
+                    return;
+                }
+
+                if (isEditing) {
+                    // Update existing question
+                    const questionIndex = questionsData.findIndex(q => q.id === editingQuestionId);
+                    if (questionIndex !== -1) {
+                        questionsData[questionIndex].message = message;
+                        questionsData[questionIndex].category = selectedCategoryBubble;
+                        questionsData[questionIndex].file = file ? file.name : questionsData[questionIndex].file;
+                    }
+                } else {
+                    // Add new question
+                    const newQuestion = {
+                        id: ++questionCount,
+                        message,
+                        category: selectedCategoryBubble,
+                        file: file ? file.name : null,
+                        user: 'User1',
+                        avatar: 'https://via.placeholder.com/50',
+                        replies: []
+                    };
+                    questionsData.push(newQuestion);
+                    addQuestionDetailButton(newQuestion);  // Add new button for the question
+                }
+
+                // Render questions and update question button list
+                renderQuestions();
+
+                // Close the popup
+                addEditPopup.style.display = 'none';
+            });
+
+            // Add button to view question details in the main container
+            function addQuestionDetailButton(question) {
+                const button = document.createElement('button');
+                button.className = 'question-btn';
+                button.textContent = `Question${question.id}`;
+                button.onclick = () => viewQuestionDetails(question.id);
+                questionButtonsDiv.appendChild(button);
+            }
+
+            // View question details by clicking the button in the main container
+            function viewQuestionDetails(questionId) {
+                const question = questionsData.find(q => q.id === questionId);
+                if (question) {
+                    // Clear questionsList and show only the selected question's details
+                    questionsList.innerHTML = '';
+
+                    const questionElement = document.createElement('div');
+                    questionElement.className = 'card';
+
+                    let categoryClass = '';
+                    if (question.category === 'urgent') categoryClass = 'block-red';
+                    if (question.category === 'regular') categoryClass = 'block-green';
+                    if (question.category === 'followup') categoryClass = 'block-blue';
+
+                    questionElement.innerHTML = `
+                        <div class="card-header">
+                            <div class="user-info">
+                                <img src="${question.avatar}" alt="Avatar" class="avatar" width="30" height="30">
+                                <strong>${question.user}</strong>
+                            </div>
+                            <div class="category-bubble">
+                                <div class="category-block ${categoryClass}"></div>${question.category}
+                            </div>
+                            <div class="actions">
+                                <button class="subscribe-btn" onclick="subscribeToQuestion(${question.id})">Subscribe</button>
+                                <button class="edit-btn" onclick="openAddEditPopup(true, ${question.id})">Edit</button>
+                            </div>
+                        </div>
+                        <textarea class="content-textarea" readonly>${question.message}</textarea>
+                        ${question.file ? `<a href="#" class="file-link">${question.file}</a>` : ''}
+                        <button class="reply-btn" onclick="openReplyPopup(${question.id})">Reply</button>
+                        <div class="reply-section" id="reply-section-${question.id}"></div>`;
+
+                    questionsList.appendChild(questionElement);
+
+                    renderReplies(questionId);  // Show replies related to this question
+                }
+            }
+
+            // Render questions in the interaction area
+            function renderQuestions() {
+                questionsList.innerHTML = '';  // Clear the list
+
+                questionsData
+                    .filter(question => currentFilter === 'all' || question.category === currentFilter)
+                    .forEach(question => {
+                        // Create question card
+                        const questionElement = document.createElement('div');
+                        questionElement.className = 'card';
+
+                        let categoryClass = '';
+                        if (question.category === 'urgent') categoryClass = 'block-red';
+                        if (question.category === 'regular') categoryClass = 'block-green';
+                        if (question.category === 'followup') categoryClass = 'block-blue';
+
+                        questionElement.innerHTML = `
+                            <div class="card-header">
+                                <div class="user-info">
+                                    <img src="${question.avatar}" alt="Avatar" class="avatar" width="30" height="30">
+                                    <strong>${question.user}</strong>
+                                </div>
+                                <div class="category-bubble">
+                                    <div class="category-block ${categoryClass}"></div>${question.category}
+                                </div>
+                                <div class="actions">
+                                    <button class="subscribe-btn" onclick="subscribeToQuestion(${question.id})">Subscribe</button>
+                                    <button class="edit-btn" onclick="openAddEditPopup(true, ${question.id})">Edit</button>
+                                </div>
+                            </div>
+                            <textarea class="content-textarea" readonly>${question.message}</textarea>
+                            ${question.file ? `<a href="#" class="file-link">${question.file}</a>` : ''}
+                            <button class="reply-btn" onclick="openReplyPopup(${question.id})">Reply</button>
+                            <div class="reply-section" id="reply-section-${question.id}"></div>`;
+
+                        questionsList.appendChild(questionElement);
+                    });
+            }
+
+            // Open Reply Popup
+            function openReplyPopup(questionId) {
+                replyPopup.style.display = 'block';
+                replyMessageInput.value = '';  // Clear reply message
+                replyFileUploadInput.value = '';  // Clear file input
+
+                submitReplyBtn.onclick = () => submitReply(questionId);
+            }
+
+            // Close reply popup
+            document.getElementById('close-reply-popup').addEventListener('click', () => replyPopup.style.display = 'none');
+
+            // Submit a reply to a question
+            function submitReply(questionId) {
+                const replyMessage = replyMessageInput.value.trim();
+                const replyFile = replyFileUploadInput.files[0];
+
+                if (!replyMessage) {
+                    alert('Please enter a reply message.');
+                    return;
+                }
+
+                // Find the question to add the reply to
+                const question = questionsData.find(q => q.id === questionId);
+                if (question) {
+                    const newReply = {
+                        id: question.replies.length + 1,
+                        user: 'User1',
+                        message: replyMessage,
+                        file: replyFile ? replyFile.name : null
+                    };
+                    question.replies.push(newReply);
+                }
+
+                // Render replies
+                renderReplies(questionId);
+                replyPopup.style.display = 'none';
+            }
+
+            // Render replies for a question
+            function renderReplies(questionId) {
+                const question = questionsData.find(q => q.id === questionId);
+                const replySection = document.getElementById(`reply-section-${questionId}`);
+                replySection.innerHTML = ''; // Clear replies
+
+                question.replies.forEach(reply => {
+                    const replyElement = document.createElement('div');
+                    replyElement.className = 'reply-card';
+                    replyElement.innerHTML = `
+                        <div>
+                            <img src="https://via.placeholder.com/30" alt="Avatar" class="avatar" width="30" height="30">
+                            <strong>${reply.user}:</strong> 
+                            <textarea class="content-textarea" readonly>${reply.message}</textarea>
+                            ${reply.file ? `<a href="#" class="file-link">${reply.file}</a>` : ''}
+                        </div>
+                        <button class="like-btn" onclick="toggleLike(this)">&#x2661;</button>
+                        <button class="edit-btn" onclick="editReply(${questionId}, ${reply.id})">Edit</button>`;
+                    replySection.appendChild(replyElement);
+                });
+            }
+
+            // Edit reply for a question
+            function editReply(questionId, replyId) {
+                const question = questionsData.find(q => q.id === questionId);
+                const reply = question.replies.find(r => r.id === replyId);
+                if (reply) {
+                    replyMessageInput.value = reply.message;  // Prefill with existing reply
+                    replyFileUploadInput.value = '';  // Clear file input for editing
+
+                    replyPopup.style.display = 'block';
+
+                    submitReplyBtn.onclick = () => {
+                        reply.message = replyMessageInput.value.trim();
+                        reply.file = replyFileUploadInput.files[0] ? replyFileUploadInput.files[0].name : reply.file;
+
+                        renderReplies(questionId);  // Rerender replies after edit
+                        replyPopup.style.display = 'none';
+                    };
+                }
+            }
+
+            // Subscribe to a question
+            function subscribeToQuestion(questionId) {
+                const question = questionsData.find(q => q.id === questionId);
+                if (question) {
+                    alert(`You have subscribed to Question ${questionId}. You will receive updates on new replies.`);
+                }
+            }
+
+            // Toggle like button for replies
+            function toggleLike(heartIcon) {
+                heartIcon.classList.toggle('liked');
+                heartIcon.innerHTML = heartIcon.classList.contains('liked') ? '&#x2665;' : '&#x2661;';
+            }
+
+            // Collapse/Expand the sidebar and interaction area
+            collapseBtn.addEventListener('click', () => {
+                
+                interactionArea.classList.toggle('collapsed');  
+                collapseBtn.classList.toggle('collapsed');  
+                collapseBtn.innerHTML = interactionArea.classList.contains('collapsed') ? '&#x25B6;' : '&#x25C0;';
+            });
+
+            // Sherry end
+
+
+            // Update the event listener for saving comments
+            document.getElementById('save-comment').addEventListener('click', () => {
+                const commentText = commentInput.value.trim();
+                if (commentText) {
+                    const commentId = `#${commentIdCounter++}`; // Generate unique comment ID
+                    const commentPosition = { x: viewerElement.clientWidth - 30, y: 20 }; // Fixed x, dynamic y
+
+                    saveComment(commentId, commentText, commentPosition);
+                    commentInput.value = ''; // Clear the input
+                    commentBox.style.display = 'none'; // Hide comment box
+
+                    // Reset states after saving
+                    drawingMode = false;
+                    toggleCommentButton.textContent = 'Add Comment';
+                    buttonsContainer.style.display = 'none'; // Hide the button container
+                    isCommentVisible = false; // Reset visibility
+                    commentDisplay.style.display = 'none'; // Hide comment display
+                }
+            });
+
+            document.getElementById('cancel-comment').addEventListener('click', () => {
                 commentInput.value = ''; // Clear the input
                 commentBox.style.display = 'none'; // Hide comment box
+            });
 
-                // Reset states after saving
-                drawingMode = false;
-                toggleCommentButton.textContent = 'Add Comment';
-                buttonsContainer.style.display = 'none'; // Hide the button container
-                isCommentVisible = false; // Reset visibility
-                commentDisplay.style.display = 'none'; // Hide comment display
-            }
-        });
+            prevPageButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPage(currentPage);
+                }
+            });
 
-        document.getElementById('cancel-comment').addEventListener('click', () => {
-            commentInput.value = ''; // Clear the input
-            commentBox.style.display = 'none'; // Hide comment box
-        });
+            nextPageButton.addEventListener('click', () => {
+                if (currentPage < pdfDoc.numPages) {
+                    currentPage++;
+                    renderPage(currentPage);
+                }
+            });
 
-        prevPageButton.addEventListener('click', () => {
-            if (currentPage > 1) {
-                currentPage--;
-                renderPage(currentPage);
-            }
-        });
+        </script>
 
-        nextPageButton.addEventListener('click', () => {
-            if (currentPage < pdfDoc.numPages) {
-                currentPage++;
-                renderPage(currentPage);
-            }
-        });
-
-    </script>
-
-</body>
+    </body>
 </html>
