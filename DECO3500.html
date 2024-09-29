@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Q&A System</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Helvetica', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+        }
+
+        header {
+            background-color: #007BFF;
+            color: white;
+            padding: 15px 30px;
+            text-align: center;
+            font-size: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: row;
+            padding: 20px;
+            gap: 20px;
+            position: relative;
+        }
+
+        /* 美化按钮 */
+        button {
+            border: none;
+            outline: none;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        /* 全局按钮默认样式 */
+        button:hover {
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* 添加问题按钮 */
+        .add-question-btn {
+            background-color: #28a745;
+            color: white;
+            border: 1px solid #28a745;
+        }
+
+        .add-question-btn:hover {
+            background-color: #218838;
+        }
+
+		/* Collapse Button */
+		.collapse-btn {
+		    background-color: #007BFF;
+		    color: white;
+		    width: 40px;
+		    height: 40px;
+		    border: none;
+		    border-radius: 50%;
+		    font-size: 18px;
+		    display: flex;
+		    align-items: center;
+		    justify-content: center;
+		    position: fixed; /* Use fixed position to keep it at the top-right */
+		    top: 10px; /* Distance from the top of the page */
+		    right: 10px; /* Distance from the right side of the page */
+		    cursor: pointer;
+		    transition: background-color 0.3s ease, transform 0.3s ease;
+		    z-index: 1000; /* Ensure it stays above other content */
+		}
+		
+		.collapse-btn:hover {
+		    background-color: #0056b3;
+		    transform: scale(1.1);
+		}
+		
+		.collapse-btn.collapsed {
+		    transform: rotate(180deg);
+		}
+
+
+        /* 编辑按钮和订阅按钮 */
+        .edit-btn, .subscribe-btn {
+            background-color: transparent;
+            color: #007BFF;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .edit-btn:hover, .subscribe-btn:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+
+        /* 喜欢按钮 */
+        .like-btn {
+            background-color: transparent;
+            color: lightgray;
+            font-size: 24px;
+            padding: 5px;
+        }
+
+        .like-btn.liked {
+            color: red;
+        }
+
+        .like-btn:hover {
+            color: #ff4d4d;
+            transform: scale(1.1);
+        }
+
+        /* 提交和取消按钮 */
+        .submit-btn {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            font-size: 14px;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .cancel-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            font-size: 14px;
+            padding: 10px 20px;
+            border-radius: 8px;
+        }
+
+        .cancel-btn:hover {
+            background-color: #e74c3c;
+        }
+
+        /* 问题按钮 */
+        .question-btn {
+            background-color: #f8f9fa;
+            color: #007BFF;
+            border: 1px solid #007BFF;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .question-btn:hover {
+            background-color: #e0f7ff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: #f4f4f4;
+            width: 20%;
+            padding: 20px;
+            border-right: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            font-size: 20px;
+            color: #333;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .sidebar li {
+            margin: 12px 0;
+            font-size: 16px;
+            color: #007BFF;
+            cursor: pointer;
+        }
+
+        .sidebar li:hover {
+            text-decoration: underline;
+        }
+
+        /* Content Area */
+        .content {
+            width: 60%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Interaction Area (Right Panel) */
+        .interaction-area {
+            width: 30%;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+        }
+
+        .interaction-area.collapsed {
+            width: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Bubbles Above Interaction Area */
+        .bubble-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+
+        .bubble {
+            display: flex;
+            align-items: center;
+            padding: 5px 15px;
+            border-radius: 50px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            background-color: #ffffff;
+            width: fit-content;
+            transition: background-color 0.3s ease;
+        }
+
+        .bubble:hover {
+            background-color: #e0e0e0;
+            cursor: pointer;
+        }
+
+        .bubble .category-block {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .block-red {
+            background-color: #ff4d4d;
+        }
+
+        .block-green {
+            background-color: #28a745;
+        }
+
+        .block-blue {
+            background-color: #007bff;
+        }
+
+        .block-gray {
+            background-color: #808080;
+        }
+
+        /* Question & Reply Card Styles */
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Add space between elements */
+            transition: all 0.3s ease; /* Smooth transition for hover effect */
+        }
+
+        .card:hover {
+            transform: scale(1.02); /* Slight hover zoom effect */
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-content {
+            font-size: 16px;
+            margin-bottom: 15px;
+            max-height: 120px;
+            overflow-y: auto; /* Vertical scroll bar */
+            overflow-x: hidden; /* Disable horizontal scroll bar */
+        }
+
+        .content-textarea {
+            font-size: 14px;
+            border: none;
+            background-color: transparent;
+            resize: none;
+            outline: none;
+        }
+
+        .file-link {
+            text-decoration: underline;
+            color: #007BFF;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Reply Card */
+        .reply-card {
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Align items to the top */
+            gap: 15px; /* Add space between items */
+            transition: all 0.3s ease; /* Smooth transition for hover effect */
+            max-height: fit-content; /* Allow card to grow based on content */
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .reply-card:hover {
+            transform: scale(1.02); /* Slight hover zoom effect */
+        }
+
+        .reply-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Textareas */
+        textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: none;
+            font-size: 16px;
+            max-height: 200px;
+            overflow-y: auto; /* Enable vertical scroll bar */
+            overflow-x: hidden; /* Disable horizontal scroll bar */
+            word-wrap: break-word; /* Avoid overflow */
+        }
+
+        /* Pop-up Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 100;
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .popup-body {
+            margin-top: 15px;
+        }
+
+        .popup-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .file-upload {
+            margin-top: 10px;
+        }
+
+        /* Selected Category Highlight */
+        .category-bubble.selected, .bubble.selected {
+            background-color: #e0e0e0;
+        }
+
+        /* Horizontal bubble layout for category selection */
+        .category-bubble-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .category-bubble {
+            display: flex;
+            align-items: center;
+            padding: 5px 15px;
+            border-radius: 50px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            background-color: #ffffff;
+            transition: background-color 0.3s ease;
+            cursor: pointer; /* Add this to change cursor to pointer */
+        }
+
+        .category-bubble .category-block {
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .category-bubble:hover {
+            background-color: #e0e0e0;
+            cursor: pointer; /* Cursor changes to pointer when hovering */
+        }
+
+        .category-bubble.selected {
+            background-color: #e0e0e0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        Enhanced Q&A System
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Collapse Button -->
+        <button class="collapse-btn" id="collapse-btn">&#x25C0;</button>
+
+        <!-- Sidebar: My Courses -->
+        <aside class="sidebar" id="sidebar">
+            <h2>My Courses</h2>
+            <ul>
+                <li>DECO3500 Social and Mobile Computing</li>
+                <li>DECO???? Course Two</li>
+                <li>DECO???? Course Three</li>
+                <li>DECO???? Course Four</li>
+            </ul>
+        </aside>
+
+        <!-- Content Area -->
+        <section class="content" id="content-area">
+            <button class="add-question-btn" id="add-question-btn">Add Question</button>
+            <div id="question-buttons"></div> <!-- This is where dynamic question buttons will appear -->
+        </section>
+
+        <!-- Interaction Area -->
+        <section class="interaction-area" id="interaction-area">
+            <!-- Bubbles Above Interaction Area -->
+            <div class="bubble-container">
+                <div class="bubble" data-category="all">
+                    <div class="category-block block-gray"></div>All
+                </div>
+                <div class="bubble" data-category="urgent">
+                    <div class="category-block block-red"></div>Urgent
+                </div>
+                <div class="bubble" data-category="regular">
+                    <div class="category-block block-green"></div>Regular
+                </div>
+                <div class="bubble" data-category="followup">
+                    <div class="category-block block-blue"></div>Follow Up
+                </div>
+            </div>
+
+            <div id="questions-list">
+                <!-- Questions will be dynamically added here -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Pop-up for Add/Edit Question -->
+    <div class="popup" id="add-edit-question-popup">
+        <div class="popup-header">
+            <h3 id="popup-title">New Question</h3>
+            <button class="close-btn" id="close-popup-btn">&times;</button>
+        </div>
+        <div class="popup-body">
+            <label for="category">Select Category:</label>
+            <div class="category-bubble-container" id="category-bubble-container">
+                <div class="category-bubble" data-category="urgent">
+                    <div class="category-block block-red"></div>Urgent
+                </div>
+                <div class="category-bubble" data-category="regular">
+                    <div class="category-block block-green"></div>Regular
+                </div>
+                <div class="category-bubble" data-category="followup">
+                    <div class="category-block block-blue"></div>Follow Up
+                </div>
+            </div>
+
+            <!-- Message Textarea -->
+            <label for="message">Message</label>
+            <textarea id="message" rows="4" placeholder="Write your question here..."></textarea>
+
+            <!-- File Upload -->
+            <label for="file-upload" class="file-upload">Upload File:</label>
+            <input type="file" id="file-upload">
+
+            <!-- Pop-up Footer -->
+            <div class="popup-footer">
+                <button class="cancel-btn" id="cancel-btn">Cancel</button>
+                <button class="submit-btn" id="submit-question-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pop-up for Reply -->
+    <div class="popup" id="reply-popup">
+        <div class="popup-header">
+            <h3>Reply to Question</h3>
+            <button class="close-btn" id="close-reply-popup">&times;</button>
+        </div>
+
+        <div class="popup-body">
+            <!-- Reply Message Textarea -->
+            <label for="reply-message">Reply Message</label>
+            <textarea id="reply-message" rows="4" placeholder="Write your reply here..."></textarea>
+
+            <!-- File Upload -->
+            <label for="reply-file-upload" class="file-upload">Upload File:</label>
+            <input type="file" id="reply-file-upload">
+
+            <!-- Pop-up Footer -->
+            <div class="popup-footer">
+                <button class="cancel-btn" id="cancel-reply-btn">Cancel</button>
+                <button class="submit-btn" id="submit-reply-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Data storage for questions and replies
+        let questionsData = [];
+        let questionCount = 0; // Tracks the number of questions added
+        let currentFilter = 'all'; // To track selected category filter
+        let isEditing = false; // Tracks if we are editing an existing question
+        let editingQuestionId = null; // Stores the ID of the question being edited
+
+        // DOM element references
+        const addQuestionBtn = document.getElementById('add-question-btn');
+        const questionButtonsDiv = document.getElementById('question-buttons');
+        const addEditPopup = document.getElementById('add-edit-question-popup');
+        const closePopupBtn = document.getElementById('close-popup-btn');
+        const submitQuestionBtn = document.getElementById('submit-question-btn');
+        const messageInput = document.getElementById('message');
+        const fileUploadInput = document.getElementById('file-upload');
+        const questionsList = document.getElementById('questions-list');
+        const replyPopup = document.getElementById('reply-popup');
+        const replyMessageInput = document.getElementById('reply-message');
+        const replyFileUploadInput = document.getElementById('reply-file-upload');
+        const submitReplyBtn = document.getElementById('submit-reply-btn');
+        const collapseBtn = document.getElementById('collapse-btn');
+        const sidebar = document.getElementById('sidebar');
+        const interactionArea = document.getElementById('interaction-area');
+
+        let selectedCategoryBubble = '';
+
+        // Function to open Add/Edit Question popup
+        function openAddEditPopup(isEdit = false, questionId = null) {
+            addEditPopup.style.display = 'block';
+            isEditing = isEdit;
+            editingQuestionId = questionId;
+
+            if (isEdit) {
+                const question = questionsData.find(q => q.id === questionId);
+                if (question) {
+                    document.getElementById('popup-title').textContent = 'Edit Question';
+                    messageInput.value = question.message; // Pre-fill message
+                    selectedCategoryBubble = question.category;
+                    highlightCategoryBubble(selectedCategoryBubble);
+                }
+            } else {
+                document.getElementById('popup-title').textContent = 'New Question';
+                messageInput.value = ''; // Clear message for new question
+                selectedCategoryBubble = '';
+                highlightCategoryBubble(selectedCategoryBubble);
+            }
+            fileUploadInput.value = ''; // Clear file input
+        }
+
+        // Function to highlight selected category bubble
+        function highlightCategoryBubble(selectedCategoryBubble) {
+            const categoryBubbles = document.querySelectorAll('.category-bubble');
+            categoryBubbles.forEach(bubble => {
+                bubble.classList.remove('selected');
+                if (bubble.getAttribute('data-category') === selectedCategoryBubble) {
+                    bubble.classList.add('selected');
+                }
+            });
+        }
+
+        // Function to filter questions based on selected category
+        function filterQuestionsByCategory(category) {
+            currentFilter = category;
+            renderQuestions();  // Re-render questions with filter applied
+        }
+
+        // Event listener for category bubble selection in interaction area
+        document.querySelectorAll('.bubble').forEach(bubble => {
+            bubble.addEventListener('click', () => {
+                const category = bubble.getAttribute('data-category');
+                filterQuestionsByCategory(category);
+            });
+        });
+
+        // Event listener for category bubble selection in Add Question popup
+        document.querySelectorAll('.category-bubble').forEach(bubble => {
+            bubble.addEventListener('click', () => {
+                selectedCategoryBubble = bubble.getAttribute('data-category');
+                highlightCategoryBubble(selectedCategoryBubble);
+            });
+        });
+
+        // Show Add Question popup
+        addQuestionBtn.addEventListener('click', () => {
+            openAddEditPopup();
+        });
+
+        // Close popup when close button is clicked
+        closePopupBtn.addEventListener('click', () => addEditPopup.style.display = 'none');
+
+        // Submit new or edited question
+        submitQuestionBtn.addEventListener('click', () => {
+            const message = messageInput.value.trim();
+            const file = fileUploadInput.files[0];
+
+            if (!message || !selectedCategoryBubble) {
+                alert('Please enter a message and select a category.');
+                return;
+            }
+
+            if (isEditing) {
+                // Update existing question
+                const questionIndex = questionsData.findIndex(q => q.id === editingQuestionId);
+                if (questionIndex !== -1) {
+                    questionsData[questionIndex].message = message;
+                    questionsData[questionIndex].category = selectedCategoryBubble;
+                    questionsData[questionIndex].file = file ? file.name : questionsData[questionIndex].file;
+                }
+            } else {
+                // Add new question
+                const newQuestion = {
+                    id: ++questionCount,
+                    message,
+                    category: selectedCategoryBubble,
+                    file: file ? file.name : null,
+                    user: 'User1',
+                    avatar: 'https://via.placeholder.com/50',
+                    replies: []
+                };
+                questionsData.push(newQuestion);
+                addQuestionDetailButton(newQuestion);  // Add new button for the question
+            }
+
+            // Render questions and update question button list
+            renderQuestions();
+
+            // Close the popup
+            addEditPopup.style.display = 'none';
+        });
+
+        // Add button to view question details in the main container
+        function addQuestionDetailButton(question) {
+            const button = document.createElement('button');
+            button.className = 'question-btn';
+            button.textContent = `问题${question.id}`;
+            button.onclick = () => viewQuestionDetails(question.id);
+            questionButtonsDiv.appendChild(button);
+        }
+
+        // View question details by clicking the button in the main container
+        function viewQuestionDetails(questionId) {
+            const question = questionsData.find(q => q.id === questionId);
+            if (question) {
+                // Clear questionsList and show only the selected question's details
+                questionsList.innerHTML = '';
+
+                const questionElement = document.createElement('div');
+                questionElement.className = 'card';
+
+                let categoryClass = '';
+                if (question.category === 'urgent') categoryClass = 'block-red';
+                if (question.category === 'regular') categoryClass = 'block-green';
+                if (question.category === 'followup') categoryClass = 'block-blue';
+
+                questionElement.innerHTML = `
+                    <div class="card-header">
+                        <div class="user-info">
+                            <img src="${question.avatar}" alt="Avatar" class="avatar" width="30" height="30">
+                            <strong>${question.user}</strong>
+                        </div>
+                        <div class="category-bubble">
+                            <div class="category-block ${categoryClass}"></div>${question.category}
+                        </div>
+                        <div class="actions">
+                            <button class="subscribe-btn" onclick="subscribeToQuestion(${question.id})">Subscribe</button>
+                            <button class="edit-btn" onclick="openAddEditPopup(true, ${question.id})">Edit</button>
+                        </div>
+                    </div>
+                    <textarea class="content-textarea" readonly>${question.message}</textarea>
+                    ${question.file ? `<a href="#" class="file-link">${question.file}</a>` : ''}
+                    <button class="reply-btn" onclick="openReplyPopup(${question.id})">Reply</button>
+                    <div class="reply-section" id="reply-section-${question.id}"></div>`;
+
+                questionsList.appendChild(questionElement);
+
+                renderReplies(questionId);  // Show replies related to this question
+            }
+        }
+
+        // Render questions in the interaction area
+        function renderQuestions() {
+            questionsList.innerHTML = '';  // Clear the list
+
+            questionsData
+                .filter(question => currentFilter === 'all' || question.category === currentFilter)
+                .forEach(question => {
+                    // Create question card
+                    const questionElement = document.createElement('div');
+                    questionElement.className = 'card';
+
+                    let categoryClass = '';
+                    if (question.category === 'urgent') categoryClass = 'block-red';
+                    if (question.category === 'regular') categoryClass = 'block-green';
+                    if (question.category === 'followup') categoryClass = 'block-blue';
+
+                    questionElement.innerHTML = `
+                        <div class="card-header">
+                            <div class="user-info">
+                                <img src="${question.avatar}" alt="Avatar" class="avatar" width="30" height="30">
+                                <strong>${question.user}</strong>
+                            </div>
+                            <div class="category-bubble">
+                                <div class="category-block ${categoryClass}"></div>${question.category}
+                            </div>
+                            <div class="actions">
+                                <button class="subscribe-btn" onclick="subscribeToQuestion(${question.id})">Subscribe</button>
+                                <button class="edit-btn" onclick="openAddEditPopup(true, ${question.id})">Edit</button>
+                            </div>
+                        </div>
+                        <textarea class="content-textarea" readonly>${question.message}</textarea>
+                        ${question.file ? `<a href="#" class="file-link">${question.file}</a>` : ''}
+                        <button class="reply-btn" onclick="openReplyPopup(${question.id})">Reply</button>
+                        <div class="reply-section" id="reply-section-${question.id}"></div>`;
+
+                    questionsList.appendChild(questionElement);
+                });
+        }
+
+        // Open Reply Popup
+        function openReplyPopup(questionId) {
+            replyPopup.style.display = 'block';
+            replyMessageInput.value = '';  // Clear reply message
+            replyFileUploadInput.value = '';  // Clear file input
+
+            submitReplyBtn.onclick = () => submitReply(questionId);
+        }
+
+        // Close reply popup
+        document.getElementById('close-reply-popup').addEventListener('click', () => replyPopup.style.display = 'none');
+
+        // Submit a reply to a question
+        function submitReply(questionId) {
+            const replyMessage = replyMessageInput.value.trim();
+            const replyFile = replyFileUploadInput.files[0];
+
+            if (!replyMessage) {
+                alert('Please enter a reply message.');
+                return;
+            }
+
+            // Find the question to add the reply to
+            const question = questionsData.find(q => q.id === questionId);
+            if (question) {
+                const newReply = {
+                    id: question.replies.length + 1,
+                    user: 'User1',
+                    message: replyMessage,
+                    file: replyFile ? replyFile.name : null
+                };
+                question.replies.push(newReply);
+            }
+
+            // Render replies
+            renderReplies(questionId);
+            replyPopup.style.display = 'none';
+        }
+
+        // Render replies for a question
+        function renderReplies(questionId) {
+            const question = questionsData.find(q => q.id === questionId);
+            const replySection = document.getElementById(`reply-section-${questionId}`);
+            replySection.innerHTML = ''; // Clear replies
+
+            question.replies.forEach(reply => {
+                const replyElement = document.createElement('div');
+                replyElement.className = 'reply-card';
+                replyElement.innerHTML = `
+                    <div>
+                        <img src="https://via.placeholder.com/30" alt="Avatar" class="avatar" width="30" height="30">
+                        <strong>${reply.user}:</strong> 
+                        <textarea class="content-textarea" readonly>${reply.message}</textarea>
+                        ${reply.file ? `<a href="#" class="file-link">${reply.file}</a>` : ''}
+                    </div>
+                    <button class="like-btn" onclick="toggleLike(this)">&#x2661;</button>
+                    <button class="edit-btn" onclick="editReply(${questionId}, ${reply.id})">Edit</button>`;
+                replySection.appendChild(replyElement);
+            });
+        }
+
+        // Edit reply for a question
+        function editReply(questionId, replyId) {
+            const question = questionsData.find(q => q.id === questionId);
+            const reply = question.replies.find(r => r.id === replyId);
+            if (reply) {
+                replyMessageInput.value = reply.message;  // Prefill with existing reply
+                replyFileUploadInput.value = '';  // Clear file input for editing
+
+                replyPopup.style.display = 'block';
+
+                submitReplyBtn.onclick = () => {
+                    reply.message = replyMessageInput.value.trim();
+                    reply.file = replyFileUploadInput.files[0] ? replyFileUploadInput.files[0].name : reply.file;
+
+                    renderReplies(questionId);  // Rerender replies after edit
+                    replyPopup.style.display = 'none';
+                };
+            }
+        }
+
+        // Subscribe to a question
+        function subscribeToQuestion(questionId) {
+            const question = questionsData.find(q => q.id === questionId);
+            if (question) {
+                alert(`You have subscribed to Question ${questionId}. You will receive updates on new replies.`);
+            }
+        }
+
+        // Toggle like button for replies
+        function toggleLike(heartIcon) {
+            heartIcon.classList.toggle('liked');
+            heartIcon.innerHTML = heartIcon.classList.contains('liked') ? '&#x2665;' : '&#x2661;';
+        }
+
+        // Collapse/Expand the sidebar and interaction area
+        collapseBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            interactionArea.classList.toggle('collapsed');  
+            collapseBtn.classList.toggle('collapsed');  
+            collapseBtn.innerHTML = interactionArea.classList.contains('collapsed') ? '&#x25B6;' : '&#x25C0;';
+        });
+    </script>
+</body>
+</html>
