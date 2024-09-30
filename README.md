@@ -1,59 +1,54 @@
-Collaborative University Document Discussion Board
+# Installing Necessary Tools (XAMPP)
+## Setting Up XAMPP and Configuring Apache for Your PHP Project
 
-# Project Dependencies
+### 1. **Download and Install XAMPP**
+   - Visit the [XAMPP website](https://www.apachefriends.org/index.html).
+   - Download the version of XAMPP compatible with your system (Windows, macOS, or Linux).
+   - Install XAMPP following the on-screen instructions.
 
-## Backend Dependencies
+### 2. **Start XAMPP**
+   - Open the XAMPP Control Panel.
+   - Start the Apache service by clicking the "Start" button next to it.
 
-1. **Express**: A fast, unopinionated, minimalist web framework for Node.js.
-
-   - **Installation**:
-     ```bash
-     npm install express
+### 3. **Configure Apache to Point to `DECO3500/application`**
+   - Locate the `httpd.conf` file:
+     - Go to your XAMPP installation folder. The path is usually `C:/xampp/apache/conf/httpd.conf` (on Windows) or `/Applications/XAMPP/xamppfiles/etc/httpd.conf` (on macOS).
+   - Open `httpd.conf` in a text editor.
+   - Search for the line:
      ```
-
-2. **PDF.js**: A library for rendering PDFs in the browser.
-
-   - **Installation**: Include via CDN in your HTML file, no `npm` installation required.
-     ```html
-     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+     DocumentRoot "C:/xampp/htdocs"
      ```
-
-3. **Socket.io**: Enables real-time, bidirectional, and event-based communication.
-
-   - **Installation**:
-     ```bash
-     npm install socket.io
+     You’ll also find a corresponding `<Directory>` tag. For example:
+     ```apache
+     <Directory "C:/xampp/htdocs">
+         Options Indexes FollowSymLinks Includes ExecCGI
+         AllowOverride All
+         Require all granted
+     </Directory>
      ```
+   - Change both the `DocumentRoot` and `<Directory>` to your GitHub repo's `application` folder path. For example:
+     ```apache
+     DocumentRoot "C:/path/to/your/repo/DECO3500/application"
+     <Directory "C:/path/to/your/repo/DECO3500/application">
+         Options Indexes FollowSymLinks Includes ExecCGI
+         AllowOverride All
+         Require all granted
+     </Directory>
+     ```
+   - Save the `httpd.conf` file and close the editor.
 
-## Frontend Dependencies
+### 4. **Restart Apache**
+   - Go back to the XAMPP Control Panel.
+   - Click "Stop" next to Apache and then click "Start" again to restart Apache.
 
-1. **CSS Stylesheets**: For styling the web pages.
+### 5. **Test Your Setup**
+   - Open a web browser and type in `http://localhost`.
+   - It should load the PHP files from your `DECO3500/application` directory.
 
-   - **Installation**: No installation required; add CSS files to the `public` directory.
+### 6. **Troubleshooting**
+   - If the web page does not load, check the XAMPP Control Panel for any error messages.
+   - Verify that the paths in `httpd.conf` are correct.
+   - Ensure that Apache is running without conflicts (e.g., make sure no other service is using port 80).
 
-2. **JavaScript Libraries**: For handling PDF rendering and interactions.
-
-   - **Installation**: Included via CDN or local scripts in your HTML files.
-
-## Additional Notes
-
-- **Folder Structure**:
-  - `public/` directory should contain your `style.css`, `pdf-viewer.js`, and image files.
-  - Place the back arrow image in `public/images/back-arrow.png`.
-
-- **Example `package.json` Dependencies**:
-
-  ```json
-  {
-    "name": "project",
-    "version": "1.0.0",
-    "description": "A project with PDF viewer and real-time collaboration",
-    "main": "server.js",
-    "scripts": {
-      "start": "node server.js"
-    },
-    "dependencies": {
-      "express": "^4.18.2",
-      "socket.io": "^4.7.1"
-    }
-  }
+### 7. **Running The Website**
+   - Type 'http://localhost/Login.html' to begin testing the product
