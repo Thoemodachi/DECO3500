@@ -29,10 +29,21 @@ function createCourseElement(course) {
         <h2>${course.courseName}</h2>
     `;
 
-    newCourse.addEventListener('click', function() {
-        currentSelectedCourse = course;
-        displayFolders(course, folderType);
+    // Lazy load folders when course element comes into view
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Display folders once the course element is visible
+                newCourse.addEventListener('click', function () {
+                    currentSelectedCourse = course;
+                    displayFolders(course, folderType);
+                });
+                observer.unobserve(newCourse);  // Stop observing once loaded
+            }
+        });
     });
+
+    observer.observe(newCourse);  // Start observing the course element
 
     return newCourse;
 }

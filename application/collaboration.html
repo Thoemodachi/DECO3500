@@ -151,6 +151,7 @@
 
         <script src="js/header.js"></script>
         <script src="js/collaboration_script.js"></script>
+        <!-- <script src="js/comments.js"></script> -->
 
         <script type="module">
             import { getDocument, GlobalWorkerOptions } from './pdfjs/build/pdf.mjs';
@@ -342,6 +343,51 @@
             });
 
 
+
+
+
+            // Update the event listener for saving comments
+            document.getElementById('save-comment').addEventListener('click', () => {
+                const commentText = commentInput.value.trim();
+                if (commentText) {
+                    const commentId = `#${commentIdCounter++}`; // Generate unique comment ID
+                    const commentPosition = { x: viewerElement.clientWidth - 30, y: 20 }; // Fixed x, dynamic y
+
+                    saveComment(commentId, commentText, commentPosition);
+                    commentInput.value = ''; // Clear the input
+                    commentBox.style.display = 'none'; // Hide comment box
+
+                    // Reset states after saving
+                    drawingMode = false;
+                    toggleCommentButton.textContent = 'Add Comment';
+                    buttonsContainer.style.display = 'none'; // Hide the button container
+                    isCommentVisible = false; // Reset visibility
+                    commentDisplay.style.display = 'none'; // Hide comment display
+                }
+            });
+
+            document.getElementById('cancel-comment').addEventListener('click', () => {
+                commentInput.value = ''; // Clear the input
+                commentBox.style.display = 'none'; // Hide comment box
+            });
+
+            prevPageButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderPage(currentPage);
+                }
+            });
+
+            nextPageButton.addEventListener('click', () => {
+                if (currentPage < pdfDoc.numPages) {
+                    currentPage++;
+                    renderPage(currentPage);
+                }
+            });
+
+        </script>
+
+        <script>
             // Sherry start
 
             // Data storage for questions and replies
@@ -660,48 +706,6 @@
             });
 
             // Sherry end
-
-
-            // Update the event listener for saving comments
-            document.getElementById('save-comment').addEventListener('click', () => {
-                const commentText = commentInput.value.trim();
-                if (commentText) {
-                    const commentId = `#${commentIdCounter++}`; // Generate unique comment ID
-                    const commentPosition = { x: viewerElement.clientWidth - 30, y: 20 }; // Fixed x, dynamic y
-
-                    saveComment(commentId, commentText, commentPosition);
-                    commentInput.value = ''; // Clear the input
-                    commentBox.style.display = 'none'; // Hide comment box
-
-                    // Reset states after saving
-                    drawingMode = false;
-                    toggleCommentButton.textContent = 'Add Comment';
-                    buttonsContainer.style.display = 'none'; // Hide the button container
-                    isCommentVisible = false; // Reset visibility
-                    commentDisplay.style.display = 'none'; // Hide comment display
-                }
-            });
-
-            document.getElementById('cancel-comment').addEventListener('click', () => {
-                commentInput.value = ''; // Clear the input
-                commentBox.style.display = 'none'; // Hide comment box
-            });
-
-            prevPageButton.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderPage(currentPage);
-                }
-            });
-
-            nextPageButton.addEventListener('click', () => {
-                if (currentPage < pdfDoc.numPages) {
-                    currentPage++;
-                    renderPage(currentPage);
-                }
-            });
-
         </script>
-
     </body>
 </html>
