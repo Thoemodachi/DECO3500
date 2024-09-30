@@ -1,0 +1,486 @@
+#pdf-section {
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#viewer-container {
+    width: 100%;
+    height: calc(100vh - 100px);
+    position: relative;
+    z-index: 1; /* Lower z-index for the viewer */
+}
+#comment-box {
+    position: fixed;
+    right: 20px;
+    top: 60px;
+    width: 200px;
+    display: none;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+}
+#comment-display {
+    position: fixed;
+    right: 20px;
+    top: 100px;
+    width: 200px;
+    display: none;
+    background: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1001;
+}
+.comment-marker {
+    position: absolute;
+    border-radius: 50%;
+    width: 12px;
+    height: 12px;
+    cursor: pointer;
+    text-align: center;
+    line-height: 12px;
+    z-index: 9999; /* Set to a high value to ensure markers are on top */
+}
+
+#navigation-buttons {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+#buttons {
+    display: none;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: row;
+    padding: 20px;
+    gap: 20px;
+    position: relative;
+}
+
+/* 美化按钮 */
+button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+/* 全局按钮默认样式 */
+button:hover {
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* 添加问题按钮 */
+.add-question-btn {
+    background-color: #28a745;
+    color: white;
+    border: 1px solid #28a745;
+}
+
+.add-question-btn:hover {
+    background-color: #218838;
+}
+
+/* Collapse Button */
+.collapse-btn {
+    background-color: #007BFF;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed; /* Use fixed position to keep it at the top-right */
+    top: 100px; /* Distance from the top of the page */
+    right: 10px; /* Distance from the right side of the page */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 1000; /* Ensure it stays above other content */
+}
+
+.collapse-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.1);
+}
+
+.collapse-btn.collapsed {
+    transform: rotate(180deg);
+}
+
+
+/* 编辑按钮和订阅按钮 */
+.edit-btn, .subscribe-btn {
+    background-color: transparent;
+    color: #007BFF;
+    font-size: 14px;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.edit-btn:hover, .subscribe-btn:hover {
+    text-decoration: underline;
+    color: #0056b3;
+}
+
+/* 喜欢按钮 */
+.like-btn {
+    background-color: transparent;
+    color: lightgray;
+    font-size: 24px;
+    padding: 5px;
+}
+
+.like-btn.liked {
+    color: red;
+}
+
+.like-btn:hover {
+    color: #ff4d4d;
+    transform: scale(1.1);
+}
+
+/* 提交和取消按钮 */
+.submit-btn {
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.cancel-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+
+.cancel-btn:hover {
+    background-color: #e74c3c;
+}
+
+/* 问题按钮 */
+.question-btn {
+    background-color: #f8f9fa;
+    color: #007BFF;
+    border: 1px solid #007BFF;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.question-btn:hover {
+    background-color: #e0f7ff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar Styles */
+/* .sidebar {
+    background-color: #f4f4f4;
+    width: 20%;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h2 {
+    font-size: 20px;
+    color: #333;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar li {
+    margin: 12px 0;
+    font-size: 16px;
+    color: #007BFF;
+    cursor: pointer;
+}
+
+.sidebar li:hover {
+    text-decoration: underline;
+} */
+
+/* Content Area */
+.content {
+    width: 60%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Interaction Area (Right Panel) */
+.interaction-area {
+    /* width: 30%; */
+    padding: 20px;
+    border-left: 1px solid #ccc;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+}
+
+.interaction-area.collapsed {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Bubbles Above Interaction Area */
+.bubble-container {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    cursor: pointer;
+}
+
+.bubble {
+    display: flex;
+    align-items: center;
+    padding: 5px 15px;
+    border-radius: 50px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background-color: #ffffff;
+    width: fit-content;
+    transition: background-color 0.3s ease;
+}
+
+.bubble:hover {
+    background-color: #e0e0e0;
+    cursor: pointer;
+}
+
+.bubble .category-block {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.block-red {
+    background-color: #ff4d4d;
+}
+
+.block-green {
+    background-color: #28a745;
+}
+
+.block-blue {
+    background-color: #007bff;
+}
+
+.block-gray {
+    background-color: #808080;
+}
+
+/* Question & Reply Card Styles */
+.card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Add space between elements */
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.card:hover {
+    transform: scale(1.02); /* Slight hover zoom effect */
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.card-content {
+    font-size: 16px;
+    margin-bottom: 15px;
+    max-height: 120px;
+    overflow-y: auto; /* Vertical scroll bar */
+    overflow-x: hidden; /* Disable horizontal scroll bar */
+}
+
+.content-textarea {
+    font-size: 14px;
+    border: none;
+    background-color: transparent;
+    resize: none;
+    outline: none;
+}
+
+.file-link {
+    text-decoration: underline;
+    color: #007BFF;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+/* Reply Card */
+.reply-card {
+    background-color: #f1f1f1;
+    border-radius: 10px;
+    padding: 15px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Align items to the top */
+    gap: 15px; /* Add space between items */
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+    max-height: fit-content; /* Allow card to grow based on content */
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.reply-card:hover {
+    transform: scale(1.02); /* Slight hover zoom effect */
+}
+
+.reply-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Textareas */
+textarea {
+    width: 97%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    font-size: 16px;
+    max-height: 200px;
+    overflow-y: auto; /* Enable vertical scroll bar */
+    overflow-x: hidden; /* Disable horizontal scroll bar */
+    word-wrap: break-word; /* Avoid overflow */
+}
+
+/* Pop-up Styles */
+.popup {
+    display: none;
+    position: fixed;
+    width: 44.5%;
+    top: 50%;
+    left: 51.6%;
+    transform: translate(-1%, -50%);
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+}
+
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.popup-body {
+    margin-top: 15px;
+}
+
+.popup-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.file-upload {
+    margin-top: 10px;
+}
+
+/* Selected Category Highlight */
+.category-bubble.selected, .bubble.selected {
+    background-color: #e0e0e0;
+}
+
+/* Horizontal bubble layout for category selection */
+.category-bubble-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.category-bubble {
+    display: flex;
+    align-items: center;
+    padding: 5px 15px;
+    border-radius: 50px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    background-color: #ffffff;
+    transition: background-color 0.3s ease;
+    cursor: pointer; /* Add this to change cursor to pointer */
+}
+
+.category-bubble .category-block {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.category-bubble:hover {
+    background-color: #e0e0e0;
+    cursor: pointer; /* Cursor changes to pointer when hovering */
+}
+
+.category-bubble.selected {
+    background-color: #e0e0e0;
+}
+
+.preBtn, .nextBtn {
+    padding: 0.3rem 0.6rem; /* 減少內邊距，縮小按鈕尺寸 */
+    font-size: 1rem; /* 減少字體大小 */
+    width: auto; /* 將寬度設為自動，讓其根據內容調整 */
+    height: auto; /* 調整高度，讓其根據內容自適應 */
+    border-radius: 0.3125rem;
+    margin: 0 10px; /* 添加左右間距 */
+}
+
+.preBtn, .nextBtn {
+    background-color: var(--brown);
+    color: var(--white);
+}

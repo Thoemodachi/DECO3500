@@ -1,0 +1,266 @@
+{
+    "courses": [
+        {
+            "courseID": "1",
+            "courseNumber": "DECO3500",
+            "courseName": "Social and Mobile Computing",
+            "courseYear":"2024",
+            "courseSemester":"s2",
+            "courseCampus":"St. Lucia",
+            "schedule": [
+                {
+                "day": "Mon",
+                "start-time": "14:00",
+                "end-time": "16:59",
+                "location": "49-301 - Advanced Engineering Building, Collaborative Room",
+                "activityType": "STU",
+                "group": "STU1"
+                },
+                {
+                "day": "Wed",
+                "start-time": "15:00",
+                "end-time": "16:59",
+                "location": "49-301 - Advanced Engineering Building, Collaborative Room",
+                "activityType": "STU",
+                "group": "STU2"
+                }
+            ],
+            "learnFolders": [
+                {
+                    "learnFolderID": "1",
+                    "learnFolderName": "Week 1",
+                    "learnFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "Week 1 Slides",
+                            "learnFileType": "pdf",
+                            "learnFilePath": "./data/DECO3500_2024_s2/learning_resource/1-MON-Lecture-Contact-Introduction.pdf"
+                        },
+                        {
+                            "learnFileID": "2",
+                            "learnFileName": "Week 1 Wednesday Slides",
+                            "learnFileType": "pdf",
+                            "learnFilePath": "./data/DECO3500_2024_s2/learning_resource/1-WED-Contact.pdf"
+                        }
+                    ]
+                },
+                {
+                    "learnFolderID": "2",
+                    "learnFolderName": "Week 2",
+                    "learnFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "",
+                            "learnFileType": "",
+                            "learnFilePath": ""
+                        }
+                    ]
+                },
+                {
+                    "learnFolderID": "3",
+                    "learnFolderName": "Week 3",
+                    "learnFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "",
+                            "learnFileType": "",
+                            "learnFilePath": ""
+                        }
+                    ]
+                },
+                {
+                    "learnFolderID": "4",
+                    "learnFolderName": "Week 4",
+                    "learnFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "",
+                            "learnFileType": "",
+                            "learnFilePath": ""
+                        }
+                    ]
+                },
+                {
+                    "learnFolderID": "5",
+                    "learnFolderName": "Week 5",
+                    "learnFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "",
+                            "learnFileType": "",
+                            "learnFilePath": ""
+                        }
+                    ]
+                },
+                {
+                    "learnFolderID": "6",
+                    "learnFolderName": "Week 6",
+                    "learnFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "",
+                            "learnFileType": "",
+                            "learnFilePath": ""
+                        }
+                    ]
+                },
+                {
+                    "learnFolderID": "7",
+                    "learnFolderName": "Week 7",
+                    "learnFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "",
+                            "learnFileType": "",
+                            "learnFilePath": ""
+                        }
+                    ]
+                },
+                {
+                    "learnFolderID": "8",
+                    "learnFolderName": "Week 8",
+                    "learnFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "",
+                            "learnFileType": "",
+                            "learnFilePath": ""
+                        }
+                    ]
+                },
+                {
+                    "learnFolderID": "9",
+                    "learnFolderName": "Week 9",
+                    "learnFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "",
+                            "learnFileType": "",
+                            "learnFilePath": ""
+                        }
+                    ]
+                },
+                {
+                    "learnFolderID": "10",
+                    "learnFolderName": "Week 10",
+                    "learnFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "",
+                            "learnFileType": "",
+                            "learnFilePath": ""
+                        }
+                    ]
+                },
+                {
+                    "learnFolderID": "11",
+                    "learnFolderName": "Week 11",
+                    "learnFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "",
+                            "learnFileType": "",
+                            "learnFilePath": ""
+                        }
+                    ]
+                },
+                {
+                    "learnFolderID": "12",
+                    "learnFolderName": "Week 12",
+                    "learnFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "",
+                            "learnFileType": "",
+                            "learnFilePath": ""
+                        }
+                    ]
+                }
+            ],
+            "assessementFolders": [
+                {
+                    "assessmentFolderID": "1",
+                    "assessmentFolderName": "1 Social and Mobile Activity Tasks",
+                    "assessmentFiles": [
+                        {
+                            "assessmentFileID": "1",
+                            "assessmentFileName": "1 Activity Tasks Brief",
+                            "assessmentFileType": "pdf",
+                            "assessmentFilePath": "./data/DECO3500_2024_s2/assessment/1 Social and Mobile Activity Tasks/1_Social_Mobile_Activity_Tasks.pdf"
+                        }
+                    ]
+                },
+                {
+                    "assessmentFolderID": "2",
+                    "assessmentFolderName": "2 Design Implications and Opportunities",
+                    "assessmentFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "2 Design Opportunities and Implications Brief (version 2—updated 6 August with Gen AI instructions)",
+                            "learnFileType": "pdf",
+                            "learnFilePath": "./data/DECO3500_2024_s2/assessment/2 Design Implications and Opportunities/2_Design_Implications.pdf"
+                        }
+                    ]
+                },
+                {
+                    "assessmentFolderID": "3",
+                    "assessmentFolderName": "3 Design Proposal",
+                    "assessmentFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "3 Design Proposal brief version 03 (updated with correct dates throughout)",
+                            "learnFileType": "pdf",
+                            "learnFilePath": "./data/DECO3500_2024_s2/assessment/3 Design Proposal/3_Design_Proposal.pdf"
+                        }
+                    ]
+                },
+                {
+                    "assessmentFolderID": "4",
+                    "assessmentFolderName": "4 Design Prototype (sequence)",
+                    "assessmentFiles": [
+                        {
+                            "learnFileID": "1",
+                            "learnFileName": "4 Design Prototype brief version 02 (updated with correct dates throughout)",
+                            "learnFileType": "pdf",
+                            "learnFilePath": "./data/DECO3500_2024_s2/assessment/4 Design Prototype (sequence)/4_Design_Prototype.pdf"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "couesrID": "2",
+            "courseNumber": "CSSE7023",
+            "courseName": "Advanced Software Engineering",
+            "courseYear":"2024",
+            "courseSemester":"s2",
+            "courseCampus":"St. Lucia",
+            "courseSchedule": [
+                {
+                    "day": "Wed",
+                    "start-time": "10:00",
+                    "end-time": "11:50",
+                    "location": "14-116 - Sir Llew Edwards Building, Learning Theatre",
+                    "activityType": "LEC",
+                    "group": "LEC1"
+                },
+                {
+                    "day": "Mon",
+                    "start-time": "12:00",
+                    "end-time": "13:50",
+                    "location": "46-441 - Andrew N. Liveris Building, Computer Lab",
+                    "activityType": "PRA",
+                    "group": "PRA1"
+                },
+                {
+                    "day": "Thu",
+                    "start-time": "09:00",
+                    "end-time": "09:50",
+                    "location": "46-443 - Andrew N. Liveris Building, Collaborative Room",
+                    "activityType": "TUT",
+                    "group": "TUT1"
+                }
+            ]
+        }
+    ]
+  }

@@ -1,0 +1,49 @@
+/* Responsive settings: large screens */
+@media (min-width: 1024px) {
+    .main-container {
+        grid-template-columns: repeat(3, 1fr); /* Three per row */
+        justify-items: center;
+    }
+}
+
+/* Medium screens */
+@media (min-width: 600px) and (max-width: 1023px) {
+    .main-container {
+        grid-template-columns: repeat(1, 1fr); /* One per row */
+        justify-items: center;
+    }
+}
+
+/* Small screens */
+@media (max-width: 599px) {
+    .main-container {
+        grid-template-columns: repeat(1, 1fr); /* One per row */
+        justify-items: center;
+    }
+}
+
+@media (max-height: 643px) {
+    .background {
+        padding-top: 20px;
+    }
+}
+
+/*card*/
+.card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 1vh 2vw;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    cursor: pointer;
+}
+
+.card-header {
+    background-color: #ffffff;
+    padding: 3px;
+}
+
+.card-body {
+    padding: 10px;
+}
+

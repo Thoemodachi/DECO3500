@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Q&A System</title>
+    <link rel="stylesheet" href="./css/reset_style.css">
+    <link rel="stylesheet" href="./css/comments.css">
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Collapse Button -->
+        <button class="collapse-btn" id="collapse-btn">&#x25C0;</button>
+
+        <!-- Sidebar: My Courses -->
+        <!-- <aside class="sidebar" id="sidebar">
+            <h2>My Courses</h2>
+            <ul>
+                <li>DECO3500 Social and Mobile Computing</li>
+                <li>DECO???? Course Two</li>
+                <li>DECO???? Course Three</li>
+                <li>DECO???? Course Four</li>
+            </ul>
+        </aside> -->
+
+        <!-- Content Area -->
+        <section class="content" id="content-area">
+            <button class="add-question-btn" id="add-question-btn">Add Question</button>
+            <div id="question-buttons"></div> <!-- This is where dynamic question buttons will appear -->
+        </section>
+
+        <!-- Interaction Area -->
+        <section class="interaction-area" id="interaction-area">
+            <!-- Bubbles Above Interaction Area -->
+            <div class="bubble-container">
+                <div class="bubble" data-category="all">
+                    <div class="category-block block-gray"></div>All
+                </div>
+                <div class="bubble" data-category="urgent">
+                    <div class="category-block block-red"></div>Urgent
+                </div>
+                <div class="bubble" data-category="regular">
+                    <div class="category-block block-green"></div>Regular
+                </div>
+                <div class="bubble" data-category="followup">
+                    <div class="category-block block-blue"></div>Follow Up
+                </div>
+            </div>
+
+            <div id="questions-list">
+                <!-- Questions will be dynamically added here -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Pop-up for Add/Edit Question -->
+    <div class="popup" id="add-edit-question-popup">
+        <div class="popup-header">
+            <h3 id="popup-title">New Question</h3>
+            <button class="close-btn" id="close-popup-btn">&times;</button>
+        </div>
+        <div class="popup-body">
+            <label for="category">Select Category:</label>
+            <div class="category-bubble-container" id="category-bubble-container">
+                <div class="category-bubble" data-category="urgent">
+                    <div class="category-block block-red"></div>Urgent
+                </div>
+                <div class="category-bubble" data-category="regular">
+                    <div class="category-block block-green"></div>Regular
+                </div>
+                <div class="category-bubble" data-category="followup">
+                    <div class="category-block block-blue"></div>Follow Up
+                </div>
+            </div>
+
+            <!-- Message Textarea -->
+            <label for="message">Message</label>
+            <textarea id="message" rows="4" placeholder="Write your question here..."></textarea>
+
+            <!-- File Upload -->
+            <label for="file-upload" class="file-upload">Upload File:</label>
+            <input type="file" id="file-upload">
+
+            <!-- Pop-up Footer -->
+            <div class="popup-footer">
+                <button class="cancel-btn" id="cancel-btn">Cancel</button>
+                <button class="submit-btn" id="submit-question-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pop-up for Reply -->
+    <div class="popup" id="reply-popup">
+        <div class="popup-header">
+            <h3>Reply to Question</h3>
+            <button class="close-btn" id="close-reply-popup">&times;</button>
+        </div>
+
+        <div class="popup-body">
+            <!-- Reply Message Textarea -->
+            <label for="reply-message">Reply Message</label>
+            <textarea id="reply-message" rows="4" placeholder="Write your reply here..."></textarea>
+
+            <!-- File Upload -->
+            <label for="reply-file-upload" class="file-upload">Upload File:</label>
+            <input type="file" id="reply-file-upload">
+
+            <!-- Pop-up Footer -->
+            <div class="popup-footer">
+                <button class="cancel-btn" id="cancel-reply-btn">Cancel</button>
+                <button class="submit-btn" id="submit-reply-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/comments.js"></script>
+</body>
+</html>
