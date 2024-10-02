@@ -75,10 +75,11 @@ function displayFolders(course, folderType) {
             const folderElement = document.createElement('div');
             folderElement.classList.add('card');
             folderElement.innerHTML = `<h2>${folder.learnFolderName}</h2>`;
+            currentBreadcrumb = breadcrumbPath;
 
             // Add click event to load files when the folder is clicked
             folderElement.addEventListener('click', function() {
-                breadcrumbPath += '/' + folder.learnFolderName;  // Update breadcrumb with folder name
+                breadcrumbPath = currentBreadcrumb + '/' + folder.learnFolderName;  // Update breadcrumb with folder name
                 updateBreadcrumb();
                 displayLearnFiles(folder.learnFiles);
             });
@@ -93,10 +94,11 @@ function displayFolders(course, folderType) {
             const folderElement = document.createElement('div');
             folderElement.classList.add('card');
             folderElement.innerHTML = `<h2>${folder.assessmentFolderName}</h2>`;
+            currentBreadcrumb = breadcrumbPath;
 
             // Add click event to load files when the folder is clicked
             folderElement.addEventListener('click', function() {
-                breadcrumbPath += '/' + folder.assessmentFolderName;  // Update breadcrumb with folder name
+                breadcrumbPath = currentBreadcrumb + '/' + folder.assessmentFolderName;  // Update breadcrumb with folder name
                 updateBreadcrumb();
                 displayAssessmentFiles(folder.assessmentFiles);
             });

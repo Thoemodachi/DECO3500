@@ -33,30 +33,31 @@
                 </div>
             </div>
             <div class="grid-row">
-                <div class="col-mid-9">
+                <div class="col-8">
                     <div id="pdf-section">
                         <div id="navigation-buttons">
                             <button id="prev-page" class="preBtn">&#x25C0; </button>
                             <div id="page-info">&nbsp; Page: 1 &nbsp;</div>
                             <button id="next-page" class="nextBtn">&#x25B6; </button>
+                            
+                            <button id="toggle-comment">Add Comment</button>
+                            <div id="buttons">
+                                <button id="undo">Undo</button>
+                                <button id="redo">Redo</button>
+                            </div>
+                            <div id="question-buttons"></div>
                         </div>
                     </div>
                     <div id="viewer-container"></div>
                 </div>
-                <div class="col-mid-3">
+                <div class="col-4">
                     <!-- Collapse Button -->
                     <button class="collapse-btn" id="collapse-btn">&#x25C0;</button>
-
-                    <button id="toggle-comment">Add Comment</button>
-                    <div id="buttons">
-                        <button id="undo">Undo</button>
-                        <button id="redo">Redo</button>
-                    </div>
-                    <div id="question-buttons"></div>
             
                     <!-- Interaction Area -->
                     <section class="interaction-area" id="interaction-area">
                         <!-- Bubbles Above Interaction Area -->
+                        <p>Comment Category Filter:</p>
                         <div class="bubble-container">
                             <div class="bubble" data-category="all">
                                 <div class="category-block block-gray"></div>All
