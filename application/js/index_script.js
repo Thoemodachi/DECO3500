@@ -8,56 +8,63 @@ function updateBreadcrumb() {
     `;
 }
 
-// The center point of the campus and its radius
-const campusCenter = { lat: -27.4995096, lon: 153.0152085 };  // Campus center point 
-const campusRadius = 1; // Campus radius (unit: kilometers, assumed to be 1 km here)
+// // Fetch course data from courses.json
+// fetch('./data/courses.json')
+//     .then(response => response.json())
+//     .then(data => displayCourses(data))
+//     .catch(error => console.error('Error:', error));
 
-// Fetch course and classroom data
+// 校園的中心點經緯度和半徑 (假設以這裡的經緯度為校園的範圍)
+const campusCenter = { lat: -27.4995096, lon: 153.0152085 }; // 校園的中心點 
+const campusRadius = 1; // 校園的半徑 (單位：公里，這裡假設為 1 公里)
+
+// 獲取課程和教室資料
 Promise.all([
     fetch('./data/courses.json').then(response => response.json()),
     fetch('./data/classrooms.json').then(response => response.json())
 ])
 .then(([coursesData, classroomsData]) => {
-    // Get user's current location
+    // 獲取使用者當前位置
     navigator.geolocation.getCurrentPosition(position => {
         const userLat = position.coords.latitude;
         const userLon = position.coords.longitude;
 
-        // Map courses to their distances from the user's current location
+        // 將課程與使用者當前位置的距離對應起來
         coursesData.courses.forEach(course => {
             const classroom = classroomsData.find(c => c.courseNumber === course.courseNumber);
             if (classroom) {
                 course.distance = calculateDistance(userLat, userLon, classroom.latitude, classroom.longitude);
-                course.classroomLat = classroom.latitude;  // Classroom latitude
-                course.classroomLon = classroom.longitude; // Classroom longitude
+                course.classroomLat = classroom.latitude;  // 教室的緯度
+                course.classroomLon = classroom.longitude; // 教室的經度
             } else {
-                course.distance = Infinity; // If no location is found, set a very large value
+                course.distance = Infinity; // 如果沒有找到位置，設為一個很大的數值
             }
         });
 
-        // Sort courses by distance from the user
+        // 按照與使用者距離排序課程
         coursesData.courses.sort((a, b) => a.distance - b.distance);
 
-        // Calculate the user's distance to the campus center
+        // 計算使用者到校園的距離
         const distanceToCampus = calculateDistance(userLat, userLon, campusCenter.lat, campusCenter.lon);
 
-        // Check if the user is inside the campus
+        // 檢查使用者是否在校園內
         if (distanceToCampus <= campusRadius) {
-             // User is on campus, show a message
+             // 使用者在校園內，顯示提示訊息
              alert('You are in Campus, the course will be sorted by distance.'); 
 
-            // Display the sorted courses
+            // 顯示排序後的課程
             displayCourses(coursesData);
 
         } else {
-            // User is not on campus, show a message
+            // 使用者不在校園內，顯示提示訊息
             alert('You are not in Campus, the course wont be sorted by distance.');
 
-            // Display courses without showing the distance
+            // 不顯示距離的課程
             displayCoursesNoDis(coursesData);            
         }
+
         
-        // Display the user's location
+        // 顯示使用者位置
         displayUserLocation(userLat, userLon);
     });
 })
@@ -126,20 +133,20 @@ function createCourseElementNoDis(course) {
     return newCourse;
 }
 
-// showing courses in the displayCoursesNoDis
+// 在 courses-container 中顯示排序後的課程
 function displayCourses(data) {
-    const container = document.getElementById('displayCoursesNoDis');
-    container.innerHTML = ''; // clean any existing courses
+    const container = document.getElementById('courses-container');
+    container.innerHTML = ''; // 清空現有內容
     data.courses.forEach(course => {
         const courseElement = createCourseElement(course);
         container.appendChild(courseElement);
     });
 }
 
-// dont display distance
+// 在 courses-container 中不顯示課程的距離
 function displayCoursesNoDis(data) {
     const container = document.getElementById('courses-container');
-    container.innerHTML = ''; // clean any existing courses
+    container.innerHTML = ''; // 清空現有內容
     data.courses.forEach(course => {
         const courseElement = createCourseElementNoDis(course);
         container.appendChild(courseElement);
@@ -165,11 +172,10 @@ function displayFolders(course, folderType) {
             const folderElement = document.createElement('div');
             folderElement.classList.add('card');
             folderElement.innerHTML = `<h2>${folder.learnFolderName}</h2>`;
-            currentBreadcrumb = breadcrumbPath;
 
             // Add click event to load files when the folder is clicked
             folderElement.addEventListener('click', function() {
-                breadcrumbPath = currentBreadcrumb + '/' + folder.learnFolderName;  // Update breadcrumb with folder name
+                breadcrumbPath += '/' + folder.learnFolderName;  // Update breadcrumb with folder name
                 updateBreadcrumb();
                 displayLearnFiles(folder.learnFiles);
             });
@@ -184,11 +190,10 @@ function displayFolders(course, folderType) {
             const folderElement = document.createElement('div');
             folderElement.classList.add('card');
             folderElement.innerHTML = `<h2>${folder.assessmentFolderName}</h2>`;
-            currentBreadcrumb = breadcrumbPath;
 
             // Add click event to load files when the folder is clicked
             folderElement.addEventListener('click', function() {
-                breadcrumbPath = currentBreadcrumb + '/' + folder.assessmentFolderName;  // Update breadcrumb with folder name
+                breadcrumbPath += '/' + folder.assessmentFolderName;  // Update breadcrumb with folder name
                 updateBreadcrumb();
                 displayAssessmentFiles(folder.assessmentFiles);
             });
@@ -286,9 +291,9 @@ document.getElementById('assessment-btn').addEventListener('click', function() {
     }
 });
 
-// use Haversine formula to calculate distance between two points
+// 輔助函數：使用 Haversine 公式計算距離
 function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // earth radius in km
+    const R = 6371; // 地球半徑，單位為公里
     const dLat = (lat2 - lat1) * (Math.PI / 180);
     const dLon = (lon2 - lon1) * (Math.PI / 180);
     const a = 
@@ -296,10 +301,10 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
         Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // distance in km
+    return R * c; // 距離，單位為公里
 }
 
-// display user location
+// 在頁面上顯示使用者的經緯度
 function displayUserLocation(lat, lon) {
     const userLocationElement = document.getElementById('user-location');
     userLocationElement.innerHTML = `your location： ${lat}, ${lon}`;
