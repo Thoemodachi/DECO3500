@@ -5,3 +5,8 @@ package.json
 # Ignore package-lock.json
 package-lock.json
 
+application/data/.DS_Store
+application/.DS_Store
+application/data/DECO3500_2024_s2/.DS_Store
+application/data/DECO3500_2024_s2/assessment/.DS_Store
+.DS_Store

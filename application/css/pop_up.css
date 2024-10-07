@@ -1,0 +1,57 @@
+/* Pop-up overlay */
+.popup-tutorial-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* Pop-up tutorial content box */
+  .popup-tutorial-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    text-align: center;
+    position: relative;
+  }
+  
+  /* Pop-up title and content */
+  .popup-tutorial-box h2 {
+    margin-bottom: 15px;
+    font-size: 24px;
+  }
+  
+  .popup-tutorial-box p {
+    margin-bottom: 20px;
+    font-size: 18px;
+  }
+  
+  /* Footer area */
+  .popup-tutorial-footer {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  /* Button style */
+  .popup-tutorial-btn {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007BFF;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .popup-tutorial-btn:hover {
+    background-color: #0056b3;
+  }
+  

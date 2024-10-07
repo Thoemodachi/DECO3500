@@ -63,7 +63,7 @@ body, html {
 
 /* Image section */
 .image-section {
-    background-image: url('../img/krishna-mantripragada-psMKYwfrJXQ-unsplash.jpg'); /* Replace with your image URL */
+    background-image: url('../media/images/krishna-mantripragada-psMKYwfrJXQ-unsplash.jpg'); /* Replace with your image URL */
     background-size: cover;
     background-position: center;
     display: flex;
