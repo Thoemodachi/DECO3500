@@ -8,11 +8,60 @@ function updateBreadcrumb() {
     `;
 }
 
-// Fetch course data from courses.json
-fetch('./data/courses.json')
-    .then(response => response.json())
-    .then(data => displayCourses(data))
-    .catch(error => console.error('Error:', error));
+// The center point of the campus and its radius
+const campusCenter = { lat: -27.4995096, lon: 153.0152085 };  // Campus center point 
+const campusRadius = 1; // Campus radius (unit: kilometers, assumed to be 1 km here)
+
+// Fetch course and classroom data
+Promise.all([
+    fetch('./data/courses.json').then(response => response.json()),
+    fetch('./data/classrooms.json').then(response => response.json())
+])
+.then(([coursesData, classroomsData]) => {
+    // Get user's current location
+    navigator.geolocation.getCurrentPosition(position => {
+        const userLat = position.coords.latitude;
+        const userLon = position.coords.longitude;
+
+        // Map courses to their distances from the user's current location
+        coursesData.courses.forEach(course => {
+            const classroom = classroomsData.find(c => c.courseNumber === course.courseNumber);
+            if (classroom) {
+                course.distance = calculateDistance(userLat, userLon, classroom.latitude, classroom.longitude);
+                course.classroomLat = classroom.latitude;  // Classroom latitude
+                course.classroomLon = classroom.longitude; // Classroom longitude
+            } else {
+                course.distance = Infinity; // If no location is found, set a very large value
+            }
+        });
+
+        // Sort courses by distance from the user
+        coursesData.courses.sort((a, b) => a.distance - b.distance);
+
+        // Calculate the user's distance to the campus center
+        const distanceToCampus = calculateDistance(userLat, userLon, campusCenter.lat, campusCenter.lon);
+
+        // Check if the user is inside the campus
+        if (distanceToCampus <= campusRadius) {
+             // User is on campus, show a message
+             alert('You are in Campus, the course will be sorted by distance.'); 
+
+            // Display the sorted courses
+            displayCourses(coursesData);
+
+        } else {
+            // User is not on campus, show a message
+            alert('You are not in Campus, the course wont be sorted by distance.');
+
+            // Display courses without showing the distance
+            displayCoursesNoDis(coursesData);            
+        }
+        
+        // Display the user's location
+        displayUserLocation(userLat, userLon);
+    });
+})
+.catch(console.log("Error loading course data"));
 
 // Selected course
 let currentSelectedCourse = null;
@@ -22,6 +71,35 @@ let folderType = "learnFolders";
 
 // Function: Create a course element
 function createCourseElement(course) {
+    const newCourse = document.createElement('div');
+    newCourse.classList.add('card');
+    newCourse.innerHTML = `
+        <h2>${course.courseNumber}</h2>
+        <h2>${course.courseName}</h2>
+        <p>Distance:${course.distance.toFixed(2)} km</p>
+    `;
+
+    // Lazy load folders when course element comes into view
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                // Display folders once the course element is visible
+                newCourse.addEventListener('click', function () {
+                    currentSelectedCourse = course;
+                    displayFolders(course, folderType);
+                });
+                observer.unobserve(newCourse);  // Stop observing once loaded
+            }
+        });
+    });
+
+    observer.observe(newCourse);  // Start observing the course element
+
+    return newCourse;
+}
+
+// Function: Create a course element
+function createCourseElementNoDis(course) {
     const newCourse = document.createElement('div');
     newCourse.classList.add('card');
     newCourse.innerHTML = `
@@ -48,14 +126,26 @@ function createCourseElement(course) {
     return newCourse;
 }
 
-// Display courses in the courses-container
+// showing courses in the displayCoursesNoDis
 function displayCourses(data) {
-    const container = document.getElementById('courses-container');
-    data.courses.forEach(courses => {
-        const courseElement = createCourseElement(courses);
+    const container = document.getElementById('displayCoursesNoDis');
+    container.innerHTML = ''; // clean any existing courses
+    data.courses.forEach(course => {
+        const courseElement = createCourseElement(course);
         container.appendChild(courseElement);
     });
 }
+
+// dont display distance
+function displayCoursesNoDis(data) {
+    const container = document.getElementById('courses-container');
+    container.innerHTML = ''; // clean any existing courses
+    data.courses.forEach(course => {
+        const courseElement = createCourseElementNoDis(course);
+        container.appendChild(courseElement);
+    });
+}
+
 
 // Display folders of a selected course
 function displayFolders(course, folderType) {
@@ -193,3 +283,22 @@ document.getElementById('assessment-btn').addEventListener('click', function() {
         displayFolders(currentSelectedCourse, folderType);
     }
 });
+
+// use Haversine formula to calculate distance between two points
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    const R = 6371; // earth radius in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a = 
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // distance in km
+}
+
+// display user location
+function displayUserLocation(lat, lon) {
+    const userLocationElement = document.getElementById('user-location');
+    userLocationElement.innerHTML = `your location： ${lat}, ${lon}`;
+}
