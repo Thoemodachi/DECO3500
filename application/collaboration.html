@@ -153,246 +153,13 @@
         <script src="js/header.js"></script>
         <script src="js/collaboration_script.js"></script>
         <!-- <script src="js/comments.js"></script> -->
-
-        <script type="module">
-            import { getDocument, GlobalWorkerOptions } from './pdfjs/build/pdf.mjs';
-
-            GlobalWorkerOptions.workerSrc = './pdfjs/build/pdf.worker.mjs';
-
-            let viewerElement; // Declare viewerElement globally
-            const commentBox = document.getElementById('comment-box');
-            const commentInput = document.getElementById('comment-input');
-            const toggleCommentButton = document.getElementById('toggle-comment');
-            const buttonsContainer = document.getElementById('buttons');
-            const pageInfo = document.getElementById('page-info');
-            const commentDisplay = document.getElementById('comment-display');
-            const prevPageButton = document.getElementById('prev-page');
-            const nextPageButton = document.getElementById('next-page');
-
-            let drawingMode = false;
-            let currentDrawing = [];
-            let pdfDoc = null;
-            let currentPage = 1;
-            const pagesData = {}; // Store all drawings and comments for each page
-            let commentIdCounter = 1; // Counter for unique comment IDs
-
-            // Load the PDF document
-            const url = 'media/files/assignment_1.pdf';
-            getDocument(url).promise.then(pdf => {
-                pdfDoc = pdf;
-                renderPage(currentPage);
-            });
-
-            async function renderPage(pageNumber) {
-                if (!viewerElement) {
-                    viewerElement = document.getElementById('viewer-container'); // Initialize if not set
-                }
-
-                // Clear previous page content but keep viewerElement
-                viewerElement.innerHTML = '';
-
-                // Create and set up a new canvas
-                const canvas = document.createElement('canvas');
-                const page = await pdfDoc.getPage(pageNumber);
-                const viewport = page.getViewport({ scale: 1 });
-                canvas.width = viewport.width;
-                canvas.height = viewport.height;
-
-                // Append the new canvas to the viewer
-                viewerElement.appendChild(canvas);
-
-                // Get the drawing context
-                const context = canvas.getContext('2d');
-
-                // Render the PDF page onto the canvas
-                await page.render({ canvasContext: context, viewport: viewport }).promise;
-
-                // Retrieve and render drawings and markers for the current page
-                if (pagesData[pageNumber]) {
-                    pagesData[pageNumber].drawings.forEach(drawing => {
-                        drawLine(drawing.points);
-                    });
-                    pagesData[pageNumber].markers.forEach(marker => {
-                        createCommentMarker(marker.id, marker.position, marker.color);
-                    });
-                }
-
-                // Add event listeners for drawing on the newly created canvas
-                canvas.addEventListener('mousedown', startDrawing);
-                canvas.addEventListener('mouseup', stopDrawing);
-                canvas.addEventListener('mousemove', draw);
-
-                updatePageInfo();
-            }
-
-
-            function updatePageInfo() {
-                pageInfo.textContent = `Page: ${currentPage}`;
-            }
-
-            function startDrawing(event) {
-                if (drawingMode) {
-                    currentDrawing = [{ x: event.offsetX, y: event.offsetY }];
-                    const context = viewerElement.lastChild.getContext('2d');
-                    context.beginPath();
-                    context.moveTo(event.offsetX, event.offsetY);
-                }
-            }
-
-            function stopDrawing(event) {
-                if (drawingMode && currentDrawing.length > 0) {
-                    currentDrawing.push({ x: event.offsetX, y: event.offsetY });
-                    drawLine(currentDrawing);
-
-                    // Save the drawing for the current page
-                    const commentId = `#${commentIdCounter}`;
-                    saveDrawing(commentId, currentDrawing);
-
-                    currentDrawing = []; // Reset drawing state
-                }
-            }
-
-            function draw(event) {
-                if (drawingMode && currentDrawing.length > 0) {
-                    const context = viewerElement.lastChild.getContext('2d');
-                    context.lineTo(event.offsetX, event.offsetY);
-                    context.stroke();
-                }
-            }
-
-            function drawLine(points) {
-                if (points.length < 2) return;
-
-                const context = viewerElement.lastChild.getContext('2d');
-                context.beginPath();
-                context.moveTo(points[0].x, points[0].y);
-                for (const point of points) {
-                    context.lineTo(point.x, point.y);
-                }
-                context.stroke();
-            }
-
-            function createCommentMarker(commentId, position, color = 'yellow') {
-                const marker = document.createElement('div');
-                marker.className = 'comment-marker';
-                marker.style.left = `${(viewerElement.clientWidth / 2) - 6}px`; // Center horizontally
-                marker.style.top = `${(viewerElement.clientHeight / 2) - 6}px`; // Center vertically
-                marker.style.backgroundColor = color; // Set color
-
-                marker.onclick = () => toggleCommentDisplay(commentId); // Toggle comment display on click
-
-                if (!pagesData[currentPage]) {
-                    pagesData[currentPage] = { drawings: [], comments: [], markers: [] }; // Initialize if undefined
-                }
-                pagesData[currentPage].markers.push({ id: commentId, position: { y: viewerElement.clientHeight / 2 }, color });
-
-                viewerElement.appendChild(marker); // Append marker to the viewer
-            }
-
-            let isCommentVisible = false; // Track the visibility of the comment
-
-            function toggleCommentDisplay(commentId) {
-                const comment = pagesData[currentPage].comments.find(c => c.id === commentId);
-                
-                if (isCommentVisible && commentDisplay.innerText.includes(commentId)) {
-                    // If the comment is already visible and clicked again, hide it
-                    commentDisplay.style.display = 'none';
-                    isCommentVisible = false; // Update the visibility state
-                } else {
-                    // Show the comment if it's not already visible
-                    if (comment) {
-                        commentDisplay.innerText = `${commentId}: ${comment.text}`; // Set comment text with ID
-                        commentDisplay.style.display = 'block'; // Show comment box
-                        isCommentVisible = true; // Update the visibility state
-                    }
-                }
-            }
-
-            function saveDrawing(commentId, points) {
-                if (!pagesData[currentPage]) {
-                    pagesData[currentPage] = { drawings: [], comments: [], markers: [] };
-                }
-                pagesData[currentPage].drawings.push({ commentId, points });
-            }
-
-            function displayAllMarkers() {
-                const allMarkers = pagesData[currentPage].markers;
-                console.log("All Markers on Page " + currentPage + ":");
-                allMarkers.forEach(marker => {
-                    console.log(`ID: ${marker.id}, Position: ${marker.position.y}, Color: ${marker.color}`);
-                });
-            }
-
-            function saveComment(commentId, text, position) {
-                if (!pagesData[currentPage]) {
-                    pagesData[currentPage] = { drawings: [], comments: [], markers: [] };
-                }
-                pagesData[currentPage].comments.push({ id: commentId, text, position });
-                const averageY = (position.y + 20) / 2; // Average Y for marker placement
-                pagesData[currentPage].markers.push({ id: commentId, position: { y: averageY }, color: 'yellow' });
-                createCommentMarker(commentId, { y: averageY }); // Create marker immediately after saving the comment
-                displayAllMarkers(); // Print all markers after saving a new comment
-            }
-
-            toggleCommentButton.addEventListener('click', () => {
-                drawingMode = !drawingMode;
-                //commentBox.style.display = drawingMode ? 'block' : 'none';
-                addEditPopup.style.display = drawingMode ? 'block' : 'none';
-                //buttonsContainer.style.display = drawingMode ? 'block' : 'none';
-                //toggleCommentButton.textContent = drawingMode ? 'Exit Comment Mode' : 'Add Comment';
-                openAddEditPopup();
-            });
-
-
-
-
-
-            // Update the event listener for saving comments
-            document.getElementById('save-comment').addEventListener('click', () => {
-                const commentText = commentInput.value.trim();
-                if (commentText) {
-                    const commentId = `#${commentIdCounter++}`; // Generate unique comment ID
-                    const commentPosition = { x: viewerElement.clientWidth - 30, y: 20 }; // Fixed x, dynamic y
-
-                    saveComment(commentId, commentText, commentPosition);
-                    commentInput.value = ''; // Clear the input
-                    commentBox.style.display = 'none'; // Hide comment box
-
-                    // Reset states after saving
-                    drawingMode = false;
-                    toggleCommentButton.textContent = 'Add Comment';
-                    buttonsContainer.style.display = 'none'; // Hide the button container
-                    isCommentVisible = false; // Reset visibility
-                    commentDisplay.style.display = 'none'; // Hide comment display
-                }
-            });
-
-            document.getElementById('cancel-comment').addEventListener('click', () => {
-                commentInput.value = ''; // Clear the input
-                commentBox.style.display = 'none'; // Hide comment box
-            });
-
-            prevPageButton.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    renderPage(currentPage);
-                }
-            });
-
-            nextPageButton.addEventListener('click', () => {
-                if (currentPage < pdfDoc.numPages) {
-                    currentPage++;
-                    renderPage(currentPage);
-                }
-            });
-
-        </script>
-
+        
+        <script type="module" src="collaboration.js"></script>
         <script>
             // Sherry start
 
             // Data storage for questions and replies
-            let questionsData = [];
+            // let questionsData = [];
             let questionCount = 0; // Tracks the number of questions added
             let currentFilter = 'all'; // To track selected category filter
             let isEditing = false; // Tracks if we are editing an existing question
@@ -412,6 +179,7 @@
             const replyFileUploadInput = document.getElementById('reply-file-upload');
             const submitReplyBtn = document.getElementById('submit-reply-btn');
             const collapseBtn = document.getElementById('collapse-btn');
+            const toggleCommentButton = document.getElementById('toggle-comment');
             //const sidebar = document.getElementById('sidebar');
             const interactionArea = document.getElementById('interaction-area');
 
@@ -423,13 +191,14 @@
                 editingQuestionId = questionId;
 
                 if (isEdit) {
-                    const question = questionsData.find(q => q.id === questionId);
-                    if (question) {
-                        document.getElementById('popup-title').textContent = 'Edit Question';
-                        messageInput.value = question.message; // Pre-fill message
-                        selectedCategoryBubble = question.category;
-                        highlightCategoryBubble(selectedCategoryBubble);
-                    }
+                    addEditPopup.style.display = 'block';
+                    const question = pagesData[currentPage].questionsData.find(q => q.id === questionId);
+                // if (question) {
+                    document.getElementById('popup-title').textContent = 'Edit Question';
+                    messageInput.value = question.message; // Pre-fill message
+                    selectedCategoryBubble = question.category;
+                    highlightCategoryBubble(selectedCategoryBubble);
+                // }
                 } else {
                     document.getElementById('popup-title').textContent = 'New Question';
                     messageInput.value = ''; // Clear message for new question
@@ -487,25 +256,28 @@
 
                 if (isEditing) {
                     // Update existing question
-                    const questionIndex = questionsData.findIndex(q => q.id === editingQuestionId);
+                    const questionIndex = pagesData[currentPage].questionsData.findIndex(q => q.id === editingQuestionId);
                     if (questionIndex !== -1) {
-                        questionsData[questionIndex].message = message;
-                        questionsData[questionIndex].category = selectedCategoryBubble;
-                        questionsData[questionIndex].file = file ? file.name : questionsData[questionIndex].file;
+                        pagesData[currentPage].questionsData[questionIndex].message = message;
+                        pagesData[currentPage].questionsData[questionIndex].category = selectedCategoryBubble;
+                        pagesData[currentPage].questionsData[questionIndex].file = file ? file.name : pagesData[currentPage].questionsData[questionIndex].file;
                     }
                 } else {
                     // Add new question
                     const newQuestion = {
-                        id: ++questionCount,
+                        id: ++currentCommentId,
                         message,
                         category: selectedCategoryBubble,
                         file: file ? file.name : null,
                         user: 'User1',
                         avatar: 'https://via.placeholder.com/50',
-                        replies: []
+                        replies: [],
+                        marker_id: null
                     };
-                    questionsData.push(newQuestion);
-                    addQuestionDetailButton(newQuestion);  // Add new button for the question
+                    pagesData[currentPage].questionsData.push(newQuestion);
+                    toggleCommentButton.textContent = "Add Comment";
+                    isAddingComment = false;
+                    alreadyPlacedMarker = false;
                 }
 
                 // Render questions and update question button list
@@ -521,12 +293,11 @@
                 button.className = 'question-btn';
                 button.textContent = `Question${question.id}`;
                 button.onclick = () => viewQuestionDetails(question.id);
-                questionButtonsDiv.appendChild(button);
             }
 
             // View question details by clicking the button in the main container
             function viewQuestionDetails(questionId) {
-                const question = questionsData.find(q => q.id === questionId);
+                const question = pagesData[currentPage].questionsData.find(q => q.id === questionId);
                 if (question) {
                     // Clear questionsList and show only the selected question's details
                     questionsList.innerHTML = '';
@@ -538,7 +309,7 @@
                     if (question.category === 'urgent') categoryClass = 'block-red';
                     if (question.category === 'regular') categoryClass = 'block-green';
                     if (question.category === 'followup') categoryClass = 'block-blue';
-
+                    
                     questionElement.innerHTML = `
                         <div class="card-header">
                             <div class="user-info">
@@ -564,11 +335,55 @@
                 }
             }
 
+            
+            // Function to display the comment for a given ID
+            function displayComment(commentId) {
+                const question = pagesData[currentPage].questionsData.find(q => q.id === commentId);
+                if (question) {
+                    // Clear questionsList and show only the selected question's details
+                    questionsList.innerHTML = '';
+
+                    const questionElement = document.createElement('div');
+                    questionElement.className = 'card';
+
+                    let categoryClass = '';
+                    if (question.category === 'urgent') categoryClass = 'block-red';
+                    if (question.category === 'regular') categoryClass = 'block-green';
+                    if (question.category === 'followup') categoryClass = 'block-blue';
+                    
+                    questionElement.innerHTML = `
+                        <div class="card-header">
+                            <div class="user-info">
+                                <img src="${question.avatar}" alt="Avatar" class="avatar" width="30" height="30">
+                                <strong>${question.user}</strong>
+                            </div>
+                            <div class="category-bubble">
+                                <div class="category-block ${categoryClass}"></div>${question.category}
+                            </div>
+                            <div class="actions">
+                                <button class="subscribe-btn" onclick="subscribeToQuestion(${question.id})">Subscribe</button>
+                                <button class="edit-btn" onclick="openAddEditPopup(true, ${question.id})">Edit</button>
+                            </div>
+                        </div>
+                        <textarea class="content-textarea" readonly>${question.message}</textarea>
+                        ${question.file ? `<a href="#" class="file-link">${question.file}</a>` : ''}
+                        <button class="reply-btn" onclick="openReplyPopup(${question.id})">Reply</button>
+                        <div class="reply-section" id="reply-section-${question.id}"></div>`;
+
+                    questionsList.appendChild(questionElement);
+
+                    renderReplies(commentId);  // Show replies related to this question
+                } else {
+                    alert("Error: Comment Not Found")
+                }
+            }
+
             // Render questions in the interaction area
+            //HERE!
             function renderQuestions() {
                 questionsList.innerHTML = '';  // Clear the list
 
-                questionsData
+                pagesData[currentPage].questionsData
                     .filter(question => currentFilter === 'all' || question.category === currentFilter)
                     .forEach(question => {
                         // Create question card
@@ -579,7 +394,7 @@
                         if (question.category === 'urgent') categoryClass = 'block-red';
                         if (question.category === 'regular') categoryClass = 'block-green';
                         if (question.category === 'followup') categoryClass = 'block-blue';
-
+                    
                         questionElement.innerHTML = `
                             <div class="card-header">
                                 <div class="user-info">
@@ -626,7 +441,7 @@
                 }
 
                 // Find the question to add the reply to
-                const question = questionsData.find(q => q.id === questionId);
+                const question = pagesData[currentPage].questionsData.find(q => q.id === questionId);
                 if (question) {
                     const newReply = {
                         id: question.replies.length + 1,
@@ -644,7 +459,7 @@
 
             // Render replies for a question
             function renderReplies(questionId) {
-                const question = questionsData.find(q => q.id === questionId);
+                const question = pagesData[currentPage].questionsData.find(q => q.id === questionId);
                 const replySection = document.getElementById(`reply-section-${questionId}`);
                 replySection.innerHTML = ''; // Clear replies
 
@@ -666,7 +481,7 @@
 
             // Edit reply for a question
             function editReply(questionId, replyId) {
-                const question = questionsData.find(q => q.id === questionId);
+                const question = pagesData[currentPage].questionsData.find(q => q.id === questionId);
                 const reply = question.replies.find(r => r.id === replyId);
                 if (reply) {
                     replyMessageInput.value = reply.message;  // Prefill with existing reply
@@ -686,7 +501,7 @@
 
             // Subscribe to a question
             function subscribeToQuestion(questionId) {
-                const question = questionsData.find(q => q.id === questionId);
+                const question = pagesData[currentPage].questionsData.find(q => q.id === questionId);
                 if (question) {
                     alert(`You have subscribed to Question ${questionId}. You will receive updates on new replies.`);
                 }
@@ -699,7 +514,7 @@
             }
 
             // Collapse/Expand the sidebar and interaction area
-            collapseBtn.addEventListener('click', () => {
+            collapseBtn.addEventListener    ('click', () => {
                 
                 interactionArea.classList.toggle('collapsed');  
                 collapseBtn.classList.toggle('collapsed');  
