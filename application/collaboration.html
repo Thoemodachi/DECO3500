@@ -170,6 +170,7 @@
             const questionButtonsDiv = document.getElementById('question-buttons');
             const addEditPopup = document.getElementById('add-edit-question-popup');
             const closePopupBtn = document.getElementById('close-popup-btn');
+            const cancelBtn = document.getElementById('cancel-btn');
             const submitQuestionBtn = document.getElementById('submit-question-btn');
             const messageInput = document.getElementById('message');
             const fileUploadInput = document.getElementById('file-upload');
@@ -428,7 +429,20 @@
             }
 
             // Close reply popup
-            document.getElementById('close-reply-popup').addEventListener('click', () => replyPopup.style.display = 'none');
+            document.getElementById('close-reply-popup').addEventListener('click', () => {
+                replyPopup.style.display = 'none';
+                toggleCommentButton.textContent = "Add Comment";
+                isAddingComment = false;
+                alreadyPlacedMarker = false;
+            });
+
+            // Cancel the comment
+            document.getElementById('cancel-btn').addEventListener('click', () => {
+                addEditPopup.style.display = 'none';
+                toggleCommentButton.textContent = "Add Comment";
+                isAddingComment = false;
+                alreadyPlacedMarker = false;
+            });
 
             // Submit a reply to a question
             function submitReply(questionId) {
