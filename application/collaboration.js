@@ -64,7 +64,7 @@ async function renderPage(pageNumber) {
             circleMarker.style.width = '20px';
             circleMarker.style.height = '20px';
             circleMarker.style.borderRadius = '50%';
-            circleMarker.style.backgroundColor = 'red';
+            circleMarker.style.backgroundColor = 'rgba(255, 0, 0, 0.3)'; // Red color with 30% opacity
             circleMarker.style.left = `${marker.position.x}px`; // Use stored x position
             circleMarker.style.top = `${marker.position.y}px`; // Use stored y position
             circleMarker.style.cursor = 'pointer';
@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 circleMarker.style.width = '20px';
                 circleMarker.style.height = '20px';
                 circleMarker.style.borderRadius = '50%';
-                circleMarker.style.backgroundColor = 'red';
+                circleMarker.style.backgroundColor = 'rgba(255, 0, 0, 0.3)'; // Red color with 30% opacity
                 circleMarker.style.left = `${x - 10}px`;
                 circleMarker.style.top = `${y - 10}px`;
                 circleMarker.style.cursor = 'pointer';
