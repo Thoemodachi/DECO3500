@@ -171,6 +171,9 @@ main {
     padding: 0 10px;
 }
 
+#breadcrumb, #user-location {
+    padding: 0px 20px;
+}
 
 /* Responsive settings: Large screens */
 @media (min-width: 1024px) {

@@ -8,23 +8,17 @@ function updateBreadcrumb() {
     `;
 }
 
-// // Fetch course data from courses.json
-// fetch('./data/courses.json')
-//     .then(response => response.json())
-//     .then(data => displayCourses(data))
-//     .catch(error => console.error('Error:', error));
+// The center point of the campus and the radius (assume the latitude and longitude here are the range of the campus)
+const campusCenter = { lat: -27.4995096, lon: 153.0152085 }; // The center point of the campus
+const campusRadius = 1; // The radius of the campus (unit: km, assume to be 1 km here)
 
-// 校園的中心點經緯度和半徑 (假設以這裡的經緯度為校園的範圍)
-const campusCenter = { lat: -27.4995096, lon: 153.0152085 }; // 校園的中心點 
-const campusRadius = 1; // 校園的半徑 (單位：公里，這裡假設為 1 公里)
-
-// 獲取課程和教室資料
+// Get course and classroom data
 Promise.all([
     fetch('./data/courses.json').then(response => response.json()),
     fetch('./data/classrooms.json').then(response => response.json())
 ])
 .then(([coursesData, classroomsData]) => {
-    // 獲取使用者當前位置
+    // Get the user's current location
     navigator.geolocation.getCurrentPosition(position => {
         const userLat = position.coords.latitude;
         const userLon = position.coords.longitude;
@@ -81,10 +75,11 @@ function createCourseElement(course) {
     const newCourse = document.createElement('div');
     newCourse.classList.add('card');
     newCourse.innerHTML = `
-        <h2>${course.courseNumber}</h2>
-        <h2>${course.courseName}</h2>
+        <h2 id="course-number">${course.courseNumber}</h2>
+        <h2 id="course-name">${course.courseName}</h2>
         <p>Distance:${course.distance.toFixed(2)} km</p>
     `;
+
 
     // Lazy load folders when course element comes into view
     const observer = new IntersectionObserver((entries, observer) => {
@@ -120,6 +115,7 @@ function createCourseElementNoDis(course) {
             if (entry.isIntersecting) {
                 // Display folders once the course element is visible
                 newCourse.addEventListener('click', function () {
+                    course.style.backgroundColor = 'var(--logoggreen)';
                     currentSelectedCourse = course;
                     displayFolders(course, folderType);
                 });
@@ -214,7 +210,12 @@ function displayLearnFiles(files) {
         files.forEach(file => {
             const fileElement = document.createElement('div');
             fileElement.classList.add('card');
-            fileElement.innerHTML = `<h2>${file.learnFileName}</h2>`;
+            fileElement.innerHTML = 
+            `
+            <h2>${file.learnFileName}</h2>
+            `;
+            fileElement.style.display = 'flex';
+            fileElement.style.flexDirection = 'row';
 
             // Add click event to the fileElement div
             if (file.learnFilePath) {
@@ -250,7 +251,11 @@ function displayAssessmentFiles(files) {
         files.forEach(file => {
             const fileElement = document.createElement('div');
             fileElement.classList.add('card');
-            fileElement.innerHTML = `<h2>${file.assessmentFileName}</h2>`;
+            fileElement.innerHTML = 
+            `
+            <i class="fa-regular fa-folder"></i>
+            <h2>${file.assessmentFileName}</h2>
+            `;
 
             // Add click event to the fileElement div
             if (file.assessmentFilePath) {
@@ -277,21 +282,30 @@ function displayAssessmentFiles(files) {
     }
 }
 
-document.getElementById('learning-btn').addEventListener('click', function() {
+const learningBtn = document.getElementById('learning-btn');
+const assessmentBtn = document.getElementById('assessment-btn');
+
+learningBtn.style.backgroundColor = 'var(--lgtgreen)';
+
+learningBtn.addEventListener('click', function() {
     folderType = "learnFolders";
     if (currentSelectedCourse) {
         displayFolders(currentSelectedCourse, folderType);
     }
+    learningBtn.style.backgroundColor = 'var(--lgtgreen)';
+    assessmentBtn.style.backgroundColor = 'var(--logogreen)';
 });
 
-document.getElementById('assessment-btn').addEventListener('click', function() {
+assessmentBtn.addEventListener('click', function() {
     folderType = "assessementFolders";
     if (currentSelectedCourse) {
         displayFolders(currentSelectedCourse, folderType);
     }
+    assessmentBtn.style.backgroundColor = 'var(--lgtgreen)';
+    learningBtn.style.backgroundColor = 'var(--logogreen)';
 });
 
-// 輔助函數：使用 Haversine 公式計算距離
+// Helper function: Calculate distance using Haversine formula
 function calculateDistance(lat1, lon1, lat2, lon2) {
     const R = 6371; // 地球半徑，單位為公里
     const dLat = (lat2 - lat1) * (Math.PI / 180);
@@ -304,8 +318,9 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c; // 距離，單位為公里
 }
 
-// 在頁面上顯示使用者的經緯度
+// Show the user's latitude and longitude on the page
 function displayUserLocation(lat, lon) {
-    const userLocationElement = document.getElementById('user-location');
-    userLocationElement.innerHTML = `your location： ${lat}, ${lon}`;
+    //const userLocationElement = document.getElementById('user-location');
+    //userLocationElement.innerHTML = `your location： ${lat}, ${lon}`;
+    console.log(`Your current location： ${lat}, ${lon}`);
 }

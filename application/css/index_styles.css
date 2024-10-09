@@ -47,3 +47,14 @@
     padding: 10px;
 }
 
+#learning-btn, #assessment-btn {
+    background-color: var(--logogreen);
+    color: var(--white);
+}
+
+#learning-btn:hover, #assessment-btn:hover {
+    background-color: var(--lgtgreen);
+    color: var(--white);
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
+    transition: all 0.3s ease;
+}
