@@ -17,7 +17,6 @@
             <div class="row h-100">
                 <!-- Login Section -->
                 <div class="col-md-6 d-flex flex-column justify-content-center align-items-start px-5 login-section">
-                    <a href="#" class="back-to-shop mb-3">Go back to the main page...</a>
                     <h1 class="login-h1">Hello, Welcome!</h1>
                     <p class="mb-4">Please login to continue</p>
                     <form id="loginForm" class="w-100">
@@ -32,11 +31,10 @@
                                 <input class="form-check-input" type="checkbox" id="rememberMe">
                                 <label class="form-check-label" for="rememberMe">Remember me</label>
                             </div>
-                            <a href="#" class="forgot-password">Forgot password?</a>
+                            <a href="signup.html" class="">Sign up</a>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <button type="submit" class="btn custom-login-btn">Login</button>
-                            <a href="signup.html" class="btn custom-signup-btn">Sign up</a>
+                        <div class="d-flex justify-content-center">
+                            <button type="submit" class="btn custom-login-btn w-100">Login</button>
                         </div>
                     </form>
                     <div class="social-login mt-4">
@@ -60,16 +58,14 @@
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // 从 localStorage 获取注册时保存的用户名和密码
             // Retrieve the username and password saved during registration from localStorage
             const storedUsername = localStorage.getItem('username');
             const storedPassword = localStorage.getItem('password');
 
-            // 验证用户名和密码
             // Verify the username and password
             if (username === storedUsername && password === storedPassword) {
                 alert('Login Successful');
-                window.location.href = './index.html'; // 登录成功后跳转到主页面 (Jump to dashboard afer login successful)
+                window.location.href = './index.html'; // Jump to dashboard afer login successful
             } else {
                 alert('Login Failed: Invalid username or password');
             }
