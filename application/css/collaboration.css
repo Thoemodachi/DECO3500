@@ -484,3 +484,8 @@ textarea {
     background-color: var(--brown);
     color: var(--white);
 }
+
+canvas {
+    width: 100%;
+    height: auto;
+}
