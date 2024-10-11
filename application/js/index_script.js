@@ -115,7 +115,7 @@ function createCourseElementNoDis(course) {
             if (entry.isIntersecting) {
                 // Display folders once the course element is visible
                 newCourse.addEventListener('click', function () {
-                    course.style.backgroundColor = 'var(--logoggreen)';
+                    // course.style.backgroundColor = 'var(--logoggreen)';
                     currentSelectedCourse = course;
                     displayFolders(course, folderType);
                 });
