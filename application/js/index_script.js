@@ -115,7 +115,12 @@ function createCourseElementNoDis(course) {
             if (entry.isIntersecting) {
                 // Display folders once the course element is visible
                 newCourse.addEventListener('click', function () {
-                    // course.style.backgroundColor = 'var(--logoggreen)';
+                    // Clear background color for all courses cards
+                    clearAllCoursesBackgrounds();
+
+                    // Set the background color of the clicked course
+                    newCourse.style.backgroundColor = 'var(--mintgreen)';
+                    newCourse.style.borderColor = 'black';
                     currentSelectedCourse = course;
                     displayFolders(course, folderType);
                 });
@@ -127,6 +132,17 @@ function createCourseElementNoDis(course) {
     observer.observe(newCourse);  // Start observing the course element
 
     return newCourse;
+}
+
+// Function: Clear background color for all courses cards
+function clearAllCoursesBackgrounds() {
+    let courseCards = document.querySelectorAll('#courses-container .card');
+    if (courseCards.length > 0) {
+        courseCards.forEach(courseCard => {
+            courseCard.style.backgroundColor = 'white';
+            courseCard.style.borderColor = 'white';
+        });
+    }
 }
 
 // 在 courses-container 中顯示排序後的課程
@@ -149,7 +165,6 @@ function displayCoursesNoDis(data) {
     });
 }
 
-
 // Display folders of a selected course
 function displayFolders(course, folderType) {
     const foldersContainer = document.getElementById('folders-container');
@@ -167,12 +182,22 @@ function displayFolders(course, folderType) {
         course.learnFolders.forEach(folder => {
             const folderElement = document.createElement('div');
             folderElement.classList.add('card');
+            folderElement.style.borderColor = 'black';
             folderElement.innerHTML = `<h2>${folder.learnFolderName}</h2>`;
 
             // Add click event to load files when the folder is clicked
             folderElement.addEventListener('click', function() {
-                breadcrumbPath += '/' + folder.learnFolderName;  // Update breadcrumb with folder name
+                // Update breadcrumb with folder name
+                breadcrumbPath += '/' + folder.learnFolderName;
                 updateBreadcrumb();
+
+                // Clear background color for all folders cards
+                clearAllFoldersBackgrounds();
+
+                // Set the background color of the clicked folder
+                folderElement.style.backgroundColor = 'var(--mintgreen)';
+                folderElement.style.borderColor = 'black';
+
                 displayLearnFiles(folder.learnFiles);
             });
 
@@ -189,8 +214,17 @@ function displayFolders(course, folderType) {
 
             // Add click event to load files when the folder is clicked
             folderElement.addEventListener('click', function() {
-                breadcrumbPath += '/' + folder.assessmentFolderName;  // Update breadcrumb with folder name
+                // Update breadcrumb with folder name
+                breadcrumbPath += '/' + folder.assessmentFolderName;
                 updateBreadcrumb();
+
+                // Clear background color for all folders cards
+                clearAllFoldersBackgrounds();
+
+                // Set the background color of the clicked folder
+                folderElement.style.backgroundColor = 'var(--mintgreen)';
+                folderElement.style.borderColor = 'black';
+
                 displayAssessmentFiles(folder.assessmentFiles);
             });
 
@@ -198,6 +232,17 @@ function displayFolders(course, folderType) {
         });
     } else {
         foldersContainer.innerHTML = '<p>No folders available for this course.</p>';
+    }
+}
+
+// Function: Clear background color for all folders cards
+function clearAllFoldersBackgrounds() {
+    let folderCards = document.querySelectorAll('#folders-container .card');
+    if (folderCards.length > 0) {
+        folderCards.forEach(folderCard => {
+            folderCard.style.backgroundColor = 'white';
+            folderCard.style.borderColor = 'darkgray';
+        });
     }
 }
 
@@ -222,6 +267,13 @@ function displayLearnFiles(files) {
                 fileElement.addEventListener('click', function() {
                     breadcrumbPath += '/' + file.learnFileName;  // Update breadcrumb with file name
                     updateBreadcrumb();  // Refresh breadcrumb display
+
+                    // Clear background color for all files cards
+                    clearAllFilesBackgrounds();
+
+                    // Set the background color of the clicked file
+                    fileElement.style.backgroundColor = 'var(--mintgreen)';
+                    fileElement.style.borderColor = 'black';
 
                     // Redirect to collaboration.html with file name as URL parameter
                     const fileNameEncoded = encodeURIComponent(file.learnFileName);
@@ -279,6 +331,17 @@ function displayAssessmentFiles(files) {
         });
     } else {
         filesContainer.innerHTML = '<p>No files available in this folder.</p>';
+    }
+}
+
+// Function: Clear background color for all files cards
+function clearAllFilesBackgrounds() {
+    let fileCards = document.querySelectorAll('#files-container .card');
+    if (fileCards.length > 0) {
+        fileCards.forEach(fileCard => {
+            fileCard.style.backgroundColor = 'white';
+            fileCard.style.borderColor = 'darkgray';
+        });
     }
 }
 
