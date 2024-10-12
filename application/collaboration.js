@@ -64,7 +64,7 @@ async function renderPage(pageNumber) {
             circleMarker.style.width = '20px';
             circleMarker.style.height = '20px';
             circleMarker.style.borderRadius = '50%';
-            circleMarker.style.backgroundColor = 'rgba(255, 0, 0, 0.3)'; // Red color with 30% opacity
+            circleMarker.style.backgroundColor = marker.colour; // Red color with 30% opacity
             circleMarker.style.left = `${marker.position.x}px`; // Use stored x position
             circleMarker.style.top = `${marker.position.y}px`; // Use stored y position
             circleMarker.style.cursor = 'pointer';
@@ -118,6 +118,33 @@ toggleCommentButton.addEventListener('click', () => {
     }
 });
 
+function updateMarkerColor(markerElement) {
+    let markerColor = 'rgba(128, 128, 128, 0.3)'; // Default grey color
+
+    if (window.selectedCategoryBubble === 'urgent') {
+        markerColor = 'rgba(255, 0, 0, 0.3)'; // Red color for urgent
+    } else if (window.selectedCategoryBubble === 'regular') {
+        markerColor = 'rgba(0, 128, 0, 0.3)'; // Green color for regular
+    } else if (window.selectedCategoryBubble === 'followup') {
+        markerColor = 'rgba(0, 0, 255, 0.3)'; // Blue color for follow-up
+    }
+
+    markerElement.style.backgroundColor = markerColor;
+}
+
+function getMarkerColor() {
+    switch (window.selectedCategoryBubble) {
+        case 'urgent':
+            return 'rgba(255, 0, 0, 0.3)'; // Red for urgent
+        case 'regular':
+            return 'rgba(0, 128, 0, 0.3)'; // Green for regular
+        case 'followup':
+            return 'rgba(0, 0, 255, 0.3)'; // Blue for follow-up
+        default:
+            return 'rgba(128, 128, 128, 0.3)'; // Grey as the default color
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const viewerElement = document.getElementById('viewer-container');
     const messageInput = document.getElementById('message'); // Assuming this is the input field
@@ -138,10 +165,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 circleMarker.style.width = '20px';
                 circleMarker.style.height = '20px';
                 circleMarker.style.borderRadius = '50%';
-                circleMarker.style.backgroundColor = 'rgba(255, 0, 0, 0.3)'; // Red color with 30% opacity
+
+                // circleMarker.style.backgroundColor = 'rgba(255, 0, 0, 0.3)'; // Red color with 30% opacity
                 circleMarker.style.left = `${x - 10}px`;
                 circleMarker.style.top = `${y - 10}px`;
                 circleMarker.style.cursor = 'pointer';
+                updateMarkerColor(circleMarker);
                 viewerElement.appendChild(circleMarker);
                 // Toggle the visibility of the popup based on its current display style
                 addEditPopup.style.display = addEditPopup.style.display === 'block' ? 'none' : 'block';
@@ -159,10 +188,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitButton.onclick = () => {
                     // check here next
                     const message = messageInput.value.trim();
-
                     const markerData = {
                         commentId: currentCommentId, // Store the comment ID
-                        position: { x: x - 10, y: y - 10 } // Store the position (adjust for centering)
+                        position: { x: x - 10, y: y - 10 }, // Store the position (adjust for centering)
+                        colour: getMarkerColor(selectedCategoryBubble)
                     };
                     pagesData[currentPage].markers.push(markerData); // Push the marker data to the array
 

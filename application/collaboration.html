@@ -153,7 +153,9 @@
         <script src="js/header.js"></script>
         <script src="js/collaboration_script.js"></script>
         <!-- <script src="js/comments.js"></script> -->
-        
+        <script> 
+            window.selectedCategoryBubble = '';
+        </script>
         <script type="module" src="collaboration.js"></script>
         <script>
             // Sherry start
@@ -184,7 +186,7 @@
             //const sidebar = document.getElementById('sidebar');
             const interactionArea = document.getElementById('interaction-area');
 
-            let selectedCategoryBubble = '';
+            // let selectedCategoryBubble = '';
 
             // Function to open Add/Edit Question popup
             function openAddEditPopup(isEdit = false, questionId = null) {
@@ -234,13 +236,32 @@
                 });
             });
 
-            // Event listener for category bubble selection in Add Question popup
+            function updateMarkerColor(markerElement) {
+                let markerColor = 'rgba(128, 128, 128, 0.3)'; // Default grey color
+
+                if (window.selectedCategoryBubble === 'urgent') {
+                    markerColor = 'rgba(255, 0, 0, 0.3)'; // Red color for urgent
+                } else if (window.selectedCategoryBubble === 'regular') {
+                    markerColor = 'rgba(0, 128, 0, 0.3)'; // Green color for regular
+                } else if (window.selectedCategoryBubble === 'followup') {
+                    markerColor = 'rgba(0, 0, 255, 0.3)'; // Blue color for follow-up
+                }
+
+                markerElement.style.backgroundColor = markerColor;
+            }
             document.querySelectorAll('.category-bubble').forEach(bubble => {
-                bubble.addEventListener('click', () => {
-                    selectedCategoryBubble = bubble.getAttribute('data-category');
-                    highlightCategoryBubble(selectedCategoryBubble);
-                });
+            bubble.addEventListener('click', () => {
+                selectedCategoryBubble = bubble.getAttribute('data-category');
+                highlightCategoryBubble(selectedCategoryBubble);
+                
+                // Update the marker color of the most recently placed marker
+                const lastMarker = document.querySelector('.circle-marker:last-of-type');
+                if (lastMarker) {
+                    updateMarkerColor(lastMarker);
+                }
             });
+        });
+
 
             // Close popup when close button is clicked
             closePopupBtn.addEventListener('click', () => addEditPopup.style.display = 'none');
@@ -249,12 +270,10 @@
             submitQuestionBtn.addEventListener('click', () => {
                 const message = messageInput.value.trim();
                 const file = fileUploadInput.files[0];
-
                 if (!message || !selectedCategoryBubble) {
                     alert('Please enter a message and select a category.');
                     return;
                 }
-
                 if (isEditing) {
                     // Update existing question
                     const questionIndex = pagesData[currentPage].questionsData.findIndex(q => q.id === editingQuestionId);
