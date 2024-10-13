@@ -2,10 +2,22 @@ let tutorialPage = 1;
 
 // Tutorial content
 const tutorialData = [
-  { title: "Welcome to Our Platform!", content: "This is the first page of the tutorial. Here we will introduce you to the basic features." },
-  { title: "Feature 1", content: "On this page, we will explain the first important feature." },
-  { title: "Feature 2", content: "This is another important feature you should know about." },
-  { title: "You're all set!", content: "Congratulations! You've completed the tutorial. Enjoy using our platform!" }
+  { 
+    title: "Welcome to COED-3500!", 
+    content: "Here you can easily manage your courses, access learning materials, and engage in discussions with other users. Let’s take a quick tour of the key features!" 
+  },
+  { 
+    title: "Manage Your Courses", 
+    content: "You can see all your enrolled courses here. Click on a course to access its resources and assessments. Use the weekly folders to navigate through the materials of each course." 
+  },
+  { 
+    title: "Comment and Engage", 
+    content: "You can add comments or questions on any content. Simply click the 'Add Comment' button, select the comment category, and submit your message. You can also filter comments based on their urgency level." 
+  },
+  { 
+    title: "Submit Questions and Files", 
+    content: "When asking a question, you can also upload files to provide more context. Don’t forget to respond to your peers’ comments by clicking the 'Reply' button." 
+  }
 ];
 
 // Show tutorial page
