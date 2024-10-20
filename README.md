@@ -1,5 +1,6 @@
 # General Functionality
 Refer to the Wiki [Website Showcase](https://github.com/Thoemodachi/DECO3500/wiki/Multi%E2%80%90User-Experience-(Simulation)) for the general functionality of COED3500. Please set up XAMPP or your own alternative tool to access the website, refer below for set up help.
+![Alt text](https://github.com/Thoemodachi/DECO3500/collaboration_page.png)
 
 # Installing Necessary Tools (XAMPP)
 ## Setting Up XAMPP and Configuring Apache for Your PHP Project
