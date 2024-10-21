@@ -1,4 +1,6 @@
 # General Functionality
+COED3500 is a website designed to facilitate multi-user Q&A for UQ Course Content, including tutorial sheets, lecture slides and assessment task sheets. It is aimed towards UQ Students studying in the IT field, and tracks whether you are working on campus or from home. You can post questions and find answers for frequently asked questions!
+
 Refer to the Wiki [Website Showcase](https://github.com/Thoemodachi/DECO3500/wiki/Multi%E2%80%90User-Experience-(Simulation)) for the general functionality of COED3500. Please set up XAMPP or your own alternative tool to access the website, refer below for set up help.
 ![image](https://github.com/user-attachments/assets/2b0c87ee-b1c6-43cb-adb4-50708bd8817f)
 
